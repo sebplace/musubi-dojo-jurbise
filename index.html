@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Musubi Dojo Jurbise · École d'Aïkido</title>
+<meta name="description" content="École d'Aïkido Musubi Dojo à Jurbise. Aïkido traditionnel Aïkikaï pour adultes et enfants. Deux cours d'essai gratuits. Académie de Police de Jurbise, route d'Ath 25-35, 7050 Jurbise."/>
+<meta name="keywords" content="Aïkido, Jurbise, Musubi Dojo, art martial, Aïkikaï, AFA, Mons, Nimy, cours enfants, self-défense"/>
+<meta property="og:title" content="Musubi Dojo Jurbise · École d'Aïkido"/>
+<meta property="og:description" content="Aïkido traditionnel à Jurbise depuis 1987. Deux cours d'essai gratuits."/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/png" href="images/logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@500;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#17130d;
+  --sumi:#211b13;
+  --paper:#f7f1e6;
+  --paper-2:#efe6d5;
+  --paper-3:#e7dcc6;
+  --vermillion:#c33025;
+  --vermillion-d:#9c231b;
+  --gold:#b08d57;
+  --indigo:#1e2b40;
+  --muted:#6f6552;
+  --line:rgba(23,19,13,.12);
+  --shadow:0 18px 50px -20px rgba(23,19,13,.45);
+  --radius:18px;
+  --maxw:1160px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{
+  margin:0;
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--ink);
+  background:var(--paper);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-height:1.12;letter-spacing:.2px}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.jp{font-family:'Noto Serif JP',serif}
+
+/* ---------- utilities ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.section{padding:104px 0}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--vermillion);font-weight:600;margin:0 0 14px;
+}
+.eyebrow::before{content:"";width:30px;height:1px;background:var(--vermillion);opacity:.6}
+.h-sec{font-size:clamp(2.1rem,4.6vw,3.4rem);margin:0 0 20px}
+.lead{font-size:1.12rem;color:var(--muted);max-width:60ch}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 26px;border-radius:999px;font-weight:600;font-size:.95rem;
+  transition:.28s ease;cursor:pointer;border:1.5px solid transparent;
+}
+.btn-primary{background:var(--vermillion);color:#fff;box-shadow:0 14px 30px -12px rgba(195,48,37,.7)}
+.btn-primary:hover{background:var(--vermillion-d);transform:translateY(-3px)}
+.btn-ghost{border-color:rgba(255,255,255,.35);color:#fff}
+.btn-ghost:hover{background:rgba(255,255,255,.12);transform:translateY(-3px)}
+.btn-dark{border-color:var(--line);color:var(--ink)}
+.btn-dark:hover{background:var(--ink);color:var(--paper);transform:translateY(-3px)}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+.no-js .reveal{opacity:1;transform:none}
+
+/* seigaiha wave motif as reusable bg */
+.waves{
+  background-image:radial-gradient(circle at 10px 18px, transparent 8px, rgba(23,19,13,.05) 9px, transparent 10px);
+  background-size:20px 20px;
+}
+
+/* ---------- header ---------- */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  transition:.35s ease;
+}
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 24px;max-width:var(--maxw);margin:0 auto;
+}
+header.scrolled{background:rgba(247,241,230,.92);backdrop-filter:blur(12px);box-shadow:0 1px 0 var(--line)}
+.brand{display:flex;align-items:center;gap:12px;color:#fff;transition:.35s}
+header.scrolled .brand{color:var(--ink)}
+.brand img{width:44px;height:44px;border-radius:50%;box-shadow:0 6px 16px -6px rgba(0,0,0,.5)}
+.brand b{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:700;letter-spacing:.5px;line-height:1}
+.brand span{display:block;font-family:'Inter';font-size:.62rem;letter-spacing:.34em;text-transform:uppercase;opacity:.8;font-weight:500}
+.menu{display:flex;align-items:center;gap:6px}
+.menu a{
+  padding:9px 14px;border-radius:999px;font-size:.86rem;font-weight:500;color:rgba(255,255,255,.9);transition:.25s
+}
+header.scrolled .menu a{color:var(--ink)}
+.menu a:hover{background:rgba(255,255,255,.15)}
+header.scrolled .menu a:hover{background:var(--paper-3)}
+.menu a.cta{background:var(--vermillion);color:#fff!important}
+.menu a.cta:hover{background:var(--vermillion-d)}
+.burger{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px}
+.burger span{width:26px;height:2px;background:#fff;transition:.3s}
+header.scrolled .burger span{background:var(--ink)}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;min-height:100vh;display:flex;align-items:center;
+  color:#f7f1e6;overflow:hidden;
+  background:
+    radial-gradient(120% 120% at 80% 0%, #33261a 0%, transparent 55%),
+    linear-gradient(160deg,#1b1611 0%,#17130d 60%,#0f0c08 100%);
+}
+.hero-waves{
+  position:absolute;inset:0;opacity:.5;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60' viewBox='0 0 120 60'%3E%3Cg fill='none' stroke='%23b08d57' stroke-opacity='0.16' stroke-width='1.4'%3E%3Cpath d='M0 60c15 0 15-24 30-24s15 24 30 24 15-24 30-24 15 24 30 24'/%3E%3Cpath d='M0 44c15 0 15-24 30-24s15 24 30 24 15-24 30-24 15 24 30 24'/%3E%3Cpath d='M0 28c15 0 15-24 30-24s15 24 30 24 15-24 30-24 15 24 30 24'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:180px 90px;
+  -webkit-mask-image:linear-gradient(to top,transparent,#000 60%);
+  mask-image:linear-gradient(to top,transparent,#000 60%);
+}
+.hero-kanji{
+  position:absolute;right:-4vw;top:44%;transform:translateY(-50%);
+  font-family:'Noto Serif JP',serif;font-weight:700;
+  font-size:min(58vw,760px);line-height:.8;color:rgba(195,48,37,.10);
+  user-select:none;pointer-events:none;
+}
+.hero-inner{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:120px 24px 90px;width:100%}
+.hero .tag{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:26px;
+}
+.hero .tag::before,.hero .tag::after{content:"";width:26px;height:1px;background:var(--gold);opacity:.6}
+.hero h1{font-size:clamp(3rem,8vw,6.4rem);font-weight:700;margin:0;letter-spacing:.5px}
+.hero h1 em{font-style:normal;color:var(--vermillion);display:inline-block}
+.hero .sub{font-size:clamp(1.05rem,2vw,1.35rem);color:rgba(247,241,230,.82);max-width:52ch;margin:22px 0 8px;font-weight:300}
+.hero .place{margin-top:10px;font-size:.95rem;color:rgba(247,241,230,.6);letter-spacing:.02em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:38px}
+.scrolldown{
+  position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:2;
+  color:rgba(247,241,230,.6);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.scrolldown i{width:1px;height:42px;background:linear-gradient(var(--gold),transparent);animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ---------- stats strip ---------- */
+.strip{background:var(--ink);color:var(--paper)}
+.strip .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:44px 24px}
+.stat{text-align:center}
+.stat b{display:block;font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:700;color:var(--gold);line-height:1}
+.stat span{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(247,241,230,.6)}
+
+/* ---------- aikido ---------- */
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:70px;align-items:center}
+.enso{position:relative;aspect-ratio:1;max-width:420px;margin:0 auto;width:100%}
+.enso svg{width:100%;height:100%;filter:drop-shadow(0 20px 40px rgba(195,48,37,.18))}
+.enso .cn{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.enso .cn .k{font-family:'Noto Serif JP',serif;font-size:3.4rem;color:var(--ink);line-height:1}
+.enso .cn small{letter-spacing:.3em;text-transform:uppercase;font-size:.7rem;color:var(--muted);margin-top:8px}
+.values{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:34px}
+.value{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}
+.value b{display:block;font-family:'Cormorant Garamond',serif;font-size:1.35rem;color:var(--vermillion);margin-bottom:4px}
+.value p{margin:0;font-size:.92rem;color:var(--muted)}
+
+/* ---------- dojo / horaires / tarifs ---------- */
+.dojo{background:var(--paper-2)}
+.cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:46px}
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:34px 30px;box-shadow:0 10px 30px -22px rgba(23,19,13,.4);transition:.3s
+}
+.card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.card .ic{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:var(--paper-3);margin-bottom:18px}
+.card .ic svg{width:26px;height:26px;stroke:var(--vermillion)}
+.card h3{font-size:1.5rem;margin:0 0 12px}
+.card ul{margin:0;padding:0;list-style:none}
+.card li{padding:9px 0;border-bottom:1px dashed var(--line);display:flex;justify-content:space-between;gap:14px;font-size:.95rem}
+.card li:last-child{border-bottom:0}
+.card li span{color:var(--muted)}
+.card li b{color:var(--ink);font-weight:600;text-align:right}
+.note{font-size:.85rem;color:var(--vermillion);font-weight:600;margin-top:14px}
+.map-row{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;margin-top:56px}
+.map-row iframe{width:100%;height:340px;border:0;border-radius:var(--radius);box-shadow:var(--shadow);filter:grayscale(.15)}
+.addr h3{font-size:1.9rem;margin:0 0 10px}
+.addr p{color:var(--muted);margin:6px 0}
+.addr .pins{display:flex;flex-direction:column;gap:14px;margin-top:22px}
+.addr .pin{display:flex;gap:14px;align-items:flex-start}
+.addr .pin svg{width:22px;height:22px;stroke:var(--vermillion);flex:0 0 auto;margin-top:3px}
+
+/* ---------- teachers ---------- */
+.teachers{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:48px}
+.teacher{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.3s}
+.teacher:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.teacher .ph{height:300px;overflow:hidden;background:var(--paper-3)}
+.teacher .ph img{width:100%;height:100%;object-fit:cover;object-position:top center;filter:grayscale(.2) contrast(1.02);transition:.5s}
+.teacher:hover .ph img{filter:none;transform:scale(1.04)}
+.teacher .body{padding:22px 24px 26px}
+.teacher .role{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--vermillion);font-weight:600}
+.teacher h3{font-size:1.6rem;margin:6px 0 6px}
+.teacher .grade{font-size:.9rem;color:var(--muted)}
+.teacher.wide{grid-column:span 3;display:grid;grid-template-columns:220px 1fr;align-items:stretch}
+.teacher.wide .ph{height:auto}
+.teacher.wide .body{padding:30px 34px}
+
+/* ---------- timeline ---------- */
+.history{background:var(--ink);color:var(--paper);position:relative;overflow:hidden}
+.history .hero-kanji{color:rgba(176,141,87,.06);font-size:min(60vw,720px)}
+.tl{position:relative;margin-top:56px;padding-left:0}
+.tl::before{content:"";position:absolute;left:120px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--gold),transparent)}
+.tl-item{display:grid;grid-template-columns:120px 1fr;gap:38px;padding:0 0 40px;position:relative}
+.tl-item .yr{text-align:right;font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:var(--gold);position:relative}
+.tl-item .yr::after{content:"";position:absolute;right:-27px;top:10px;width:12px;height:12px;border-radius:50%;background:var(--vermillion);box-shadow:0 0 0 4px rgba(195,48,37,.2)}
+.tl-item p{margin:6px 0 0;color:rgba(247,241,230,.82);max-width:60ch}
+.tl-item p b{color:#fff;font-weight:600}
+
+/* ---------- videos ---------- */
+.vid-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
+.vid{
+  background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;
+  display:flex;gap:14px;align-items:center;transition:.3s;font-size:.96rem
+}
+.vid:hover{border-color:var(--vermillion);transform:translateY(-4px);box-shadow:0 14px 30px -20px rgba(195,48,37,.5)}
+.vid .n{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--vermillion);flex:0 0 auto;width:34px}
+.vid b{font-weight:600;display:block}
+.vid span{font-size:.8rem;color:var(--muted)}
+
+/* ---------- news / memoriam ---------- */
+.news{background:var(--paper-2)}
+.news-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:34px;margin-top:46px}
+.newscard{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:34px;box-shadow:0 10px 30px -24px rgba(23,19,13,.4)}
+.newscard .date{font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--vermillion);font-weight:600}
+.newscard h3{font-size:1.7rem;margin:8px 0 12px}
+.newscard p{color:var(--muted);margin:0 0 10px}
+.memoriam{background:linear-gradient(160deg,#211b13,#17130d);color:var(--paper);text-align:center;padding:40px 34px;border-radius:var(--radius)}
+.memoriam .mimg{width:120px;height:120px;border-radius:50%;object-fit:cover;margin:0 auto 18px;border:3px solid var(--gold);filter:grayscale(.2)}
+.memoriam .lbl{font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.memoriam h3{font-size:1.8rem;margin:8px 0 4px}
+.memoriam .yrs{color:rgba(247,241,230,.6);font-size:.9rem}
+.memoriam p{color:rgba(247,241,230,.82);font-size:.92rem;margin-top:14px}
+.mem-others{margin-top:18px;font-size:.82rem;color:rgba(247,241,230,.5)}
+
+/* ---------- contact ---------- */
+.contact{background:var(--ink);color:var(--paper)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:44px}
+.cinfo .row{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid rgba(247,241,230,.12)}
+.cinfo .row svg{width:22px;height:22px;stroke:var(--gold);flex:0 0 auto;margin-top:4px}
+.cinfo .row b{display:block;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(247,241,230,.5);margin-bottom:2px;font-weight:600}
+.cinfo .row a,.cinfo .row span{color:var(--paper);font-size:1.02rem}
+.cinfo .row a:hover{color:var(--gold)}
+form{display:grid;gap:16px}
+form label{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(247,241,230,.6);margin-bottom:-8px}
+form input,form textarea{
+  background:rgba(247,241,230,.06);border:1px solid rgba(247,241,230,.16);border-radius:12px;
+  padding:14px 16px;color:var(--paper);font-family:inherit;font-size:.98rem;transition:.25s
+}
+form input:focus,form textarea:focus{outline:none;border-color:var(--gold);background:rgba(247,241,230,.1)}
+form textarea{min-height:120px;resize:vertical}
+
+/* ---------- footer ---------- */
+footer{background:#0f0c08;color:rgba(247,241,230,.7)}
+.foot{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;padding:64px 24px 30px;max-width:var(--maxw);margin:0 auto}
+.foot .brand{color:var(--paper)}
+.foot h4{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--paper);margin:0 0 16px}
+.foot ul{list-style:none;margin:0;padding:0}
+.foot li{margin:8px 0;font-size:.92rem}
+.foot a:hover{color:var(--gold)}
+.foot p{font-size:.9rem;max-width:36ch}
+.foot-bottom{border-top:1px solid rgba(247,241,230,.1);text-align:center;padding:22px;font-size:.82rem;color:rgba(247,241,230,.4)}
+.foot-bottom a{color:rgba(247,241,230,.6)}
+.foot-bottom a:hover{color:var(--gold)}
+
+.social{display:flex;gap:12px;margin-top:18px}
+.social a{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(247,241,230,.08);transition:.25s}
+.social a:hover{background:var(--vermillion);transform:translateY(-3px)}
+.social svg{width:20px;height:20px;fill:var(--paper)}
+
+/* back to top */
+.top{
+  position:fixed;right:22px;bottom:22px;z-index:50;
+  width:48px;height:48px;border-radius:50%;background:var(--vermillion);color:#fff;
+  display:grid;place-items:center;box-shadow:var(--shadow);opacity:0;transform:translateY(20px);
+  transition:.35s;pointer-events:none;border:0;cursor:pointer
+}
+.top.show{opacity:1;transform:none;pointer-events:auto}
+.top:hover{background:var(--vermillion-d)}
+
+/* ---------- responsive ---------- */
+@media(max-width:960px){
+  .split,.map-row,.news-grid,.contact-grid{grid-template-columns:1fr;gap:44px}
+  .cards-3,.teachers,.vid-grid{grid-template-columns:1fr 1fr}
+  .strip .wrap{grid-template-columns:1fr 1fr;gap:32px}
+  .foot{grid-template-columns:1fr 1fr}
+  .teacher.wide{grid-template-columns:1fr}
+  .tl::before{left:70px}
+  .tl-item{grid-template-columns:70px 1fr;gap:24px}
+  .tl-item .yr{font-size:1.3rem}
+  .tl-item .yr::after{right:-30px}
+}
+@media(max-width:640px){
+  .section{padding:76px 0}
+  .menu{
+    position:fixed;inset:0 0 0 auto;width:min(80vw,320px);background:var(--ink);
+    flex-direction:column;align-items:stretch;justify-content:flex-start;gap:6px;
+    padding:90px 22px;transform:translateX(100%);transition:.35s;box-shadow:var(--shadow)
+  }
+  .menu.open{transform:none}
+  .menu a{color:var(--paper)!important;padding:14px 16px;border-radius:12px}
+  .burger{display:flex;z-index:70}
+  .cards-3,.teachers,.vid-grid,.foot,.strip .wrap{grid-template-columns:1fr}
+  .values{grid-template-columns:1fr}
+  .hero-cta{flex-direction:column;align-items:stretch}
+  .hero-cta .btn{justify-content:center}
+}
+</style>
+</head>
+<body class="no-js">
+<script>document.body.classList.remove('no-js');</script>
+
+<header id="head">
+  <div class="nav">
+    <a href="#accueil" class="brand">
+      <img src="images/logo.png" alt="Blason Musubi Dojo"/>
+      <span style="line-height:1"><b>Musubi Dojo</b><span>Aïkido · Jurbise</span></span>
+    </a>
+    <nav class="menu" id="menu">
+      <a href="#aikido">L'Aïkido</a>
+      <a href="#dojo">Le Dojo</a>
+      <a href="#professeurs">Professeurs</a>
+      <a href="#histoire">Histoire</a>
+      <a href="#videos">Techniques</a>
+      <a href="#actualites">Actualités</a>
+      <a href="#contact" class="cta">Cours d'essai gratuit</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="accueil">
+  <div class="hero-waves"></div>
+  <div class="hero-kanji jp" aria-hidden="true">結</div>
+  <div class="hero-inner">
+    <p class="tag">École d'Aïkido Traditionnel · Aïkikaï</p>
+    <h1>L'art de<br>l'harmonie<em>.</em></h1>
+    <p class="sub">Depuis 1987, le Musubi Dojo enseigne à Jurbise un aïkido authentique : un art martial sans compétition, ouvert à toutes et tous, pour cultiver la maîtrise de soi, la souplesse du corps et de l'esprit.</p>
+    <p class="place">Académie Provinciale de Police · Route d'Ath 25-35, 7050 Jurbise</p>
+    <div class="hero-cta">
+      <a href="#contact" class="btn btn-primary">Réserver 2 cours d'essai gratuits</a>
+      <a href="#aikido" class="btn btn-ghost">Découvrir l'aïkido</a>
+    </div>
+  </div>
+  <div class="scrolldown"><span>Défiler</span><i></i></div>
+</section>
+
+<!-- ===================== STRIP ===================== -->
+<section class="strip">
+  <div class="wrap">
+    <div class="stat reveal"><b>1987</b><span>Fondation du dojo</span></div>
+    <div class="stat reveal"><b>Aïkikaï</b><span>Aïkido traditionnel</span></div>
+    <div class="stat reveal"><b>6 à 99</b><span>Ans, sans limite</span></div>
+    <div class="stat reveal"><b>2</b><span>Cours d'essai gratuits</span></div>
+  </div>
+</section>
+
+<!-- ===================== AIKIDO ===================== -->
+<section class="section" id="aikido">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Qu'est-ce que l'Aïkido</p>
+      <h2 class="h-sec">Un art martial<br>adapté au monde moderne</h2>
+      <p class="lead">Créé par O'Senseï Morihei Ueshiba, l'aïkido est la synthèse des arts martiaux japonais. Ses techniques, essentiellement défensives, permettent de répondre à toute agression sans jamais chercher à détruire ni humilier l'adversaire. Une véritable école de non-violence.</p>
+      <div class="values">
+        <div class="value"><b>Sans compétition</b><p>Pour les dames comme pour les hommes, sans limite d'âge.</p></div>
+        <div class="value"><b>Défense &amp; dissuasion</b><p>Neutraliser l'intention agressive, en préservant l'intégrité.</p></div>
+        <div class="value"><b>Maîtrise de soi</b><p>Contrôle des émotions, une excellente thérapie anti-stress.</p></div>
+        <div class="value"><b>Corps &amp; esprit</b><p>Développer la souplesse et l'harmonie intérieure.</p></div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="enso">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <path d="M100 22 a78 78 0 1 0 44 14" fill="none" stroke="#c33025" stroke-width="13" stroke-linecap="round"
+            transform="rotate(20 100 100)" opacity="0.92"/>
+        </svg>
+        <div class="cn"><span class="k jp">合気道</span><small>Aï · Ki · Dō</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DOJO / HORAIRES / TARIFS ===================== -->
+<section class="section dojo waves" id="dojo">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center">
+      <p class="eyebrow" style="justify-content:center">Le Dojo</p>
+      <h2 class="h-sec">Horaires, tarifs &amp; inscription</h2>
+      <p class="lead" style="margin:0 auto">L'école est en « portes ouvertes » pendant ses dix mois d'ouverture. Venez pousser la porte du tatami.</p>
+    </div>
+
+    <div class="cards-3">
+      <div class="card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>Horaires</h3>
+        <ul>
+          <li><span>Adultes · Lundi</span><b>20h00 à 22h00</b></li>
+          <li><span>Adultes · Mercredi</span><b>20h00 à 22h00</b></li>
+          <li><span>Adultes · Dimanche</span><b>10h30 à 12h30</b></li>
+          <li><span>Enfants · Dimanche</span><b>9h30 à 10h30</b></li>
+        </ul>
+        <p class="note">Adultes à partir de 14 ans.</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 3v18"/><path d="M17 6H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h3>Tarifs</h3>
+        <ul>
+          <li><span>Cotisation adultes</span><b>25 € / mois</b></li>
+          <li><span>Étudiants (14 ans et +)</span><b>20 € / mois</b></li>
+          <li><span>Assurance-licence AFA</span><b>35 € / an</b></li>
+        </ul>
+        <p class="note">Les 2 premiers cours d'essai sont gratuits.</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <h3>Inscription</h3>
+        <ul>
+          <li><span>Certificat médical</span><b>Récent</b></li>
+          <li><span>Essai</span><b>1 training</b></li>
+          <li><span>Ensuite</span><b>Judogi + zori</b></li>
+        </ul>
+        <p class="note">Affilié à l'Association Francophone d'Aïkido.</p>
+      </div>
+    </div>
+
+    <div class="map-row">
+      <div class="addr reveal">
+        <h3>Nous trouver</h3>
+        <p>Un dojo traditionnel, chaleureux, à deux minutes du pont de Nimy.</p>
+        <div class="pins">
+          <div class="pin">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <div><b>Académie Provinciale de Police de Jurbise</b><br>Route d'Ath 25-35, 7050 Jurbise</div>
+          </div>
+          <div class="pin">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+            <div>À 2 min du pont de Nimy · Parking sur place</div>
+          </div>
+        </div>
+        <a href="https://www.openstreetmap.org/?mlat=50.5033&mlon=3.9314#map=15/50.5033/3.9314" target="_blank" rel="noopener" class="btn btn-dark" style="margin-top:24px">Ouvrir dans OpenStreetMap</a>
+      </div>
+      <iframe class="reveal" loading="lazy" title="Carte du dojo à Jurbise" src="https://www.openstreetmap.org/export/embed.html?bbox=3.8510513305664067%2C50.465372121864185%2C4.011726379394532%2C50.54125387068491&layer=mapnik&marker=50.50327364589812%2C3.9313888549804688"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TEACHERS ===================== -->
+<section class="section" id="professeurs">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center">
+      <p class="eyebrow" style="justify-content:center">L'enseignement</p>
+      <h2 class="h-sec">Nos professeurs</h2>
+      <p class="lead" style="margin:0 auto">Une transmission directe, dans la lignée de Sugano Shihan et du Hombu Dojo de Tokyo.</p>
+    </div>
+    <div class="teachers">
+      <div class="teacher reveal">
+        <div class="ph"><img src="images/Enseignant_B.T.jpg" alt="Benoît Toulotte"/></div>
+        <div class="body">
+          <span class="role">Dojo Cho · Professeur</span>
+          <h3>Benoît Toulotte</h3>
+          <p class="grade">6ᵉ dan Aïkikaï, Shidoin · Aide-moniteur Adeps</p>
+        </div>
+      </div>
+      <div class="teacher reveal">
+        <div class="ph"><img src="images/Enseignant_F.B.png" alt="Frédéric Buchon"/></div>
+        <div class="body">
+          <span class="role">Professeur enfants</span>
+          <h3>Frédéric Buchon</h3>
+          <p class="grade">2ᵉ dan Aïkikaï · Breveté Adeps</p>
+        </div>
+      </div>
+      <div class="teacher reveal">
+        <div class="ph"><img src="images/Enseignant_G.M.png" alt="Gilles Modart"/></div>
+        <div class="body">
+          <span class="role">Assistant</span>
+          <h3>Gilles Modart</h3>
+          <p class="grade">1ᵉʳ dan Aïkikaï</p>
+        </div>
+      </div>
+    </div>
+    <p class="lead reveal" style="margin:30px auto 0;text-align:center">Directeur technique : <b style="color:var(--ink)">Louis Van Thieghem Shihan</b>, 7ᵉ dan Aïkikaï, membre de la Commission Fédérale des Grades de l'AFA.</p>
+  </div>
+</section>
+
+<!-- ===================== HISTORY ===================== -->
+<section class="section history" id="histoire">
+  <div class="hero-kanji jp" aria-hidden="true" style="left:-6vw;right:auto">道</div>
+  <div class="wrap" style="position:relative;z-index:2">
+    <div class="reveal">
+      <p class="eyebrow">Notre histoire</p>
+      <h2 class="h-sec" style="color:var(--paper)">Bientôt quatre décennies<br>sur le tatami</h2>
+    </div>
+    <div class="tl">
+      <div class="tl-item reveal"><div class="yr">1987</div><p><b>Naissance du Musubi Dojo</b> dans les locaux de l'Académie de Police de Jurbise, fondé par Jean Swaelens et Anne Danloy, tous deux formés par les maîtres japonais Sugano et Tamura Shihan.</p></div>
+      <div class="tl-item reveal"><div class="yr">1989</div><p>Le dojo accueille un <b>stage fédéral dirigé par Tamura Shihan</b>, 8ᵉ dan, rassemblant une centaine d'aïkidoka de Belgique et d'ailleurs.</p></div>
+      <div class="tl-item reveal"><div class="yr">1996</div><p>Maître Jean De Dobbeleer, 6ᵉ dan et plus haut gradé de l'AFA, rejoint le club comme <b>directeur technique</b>.</p></div>
+      <div class="tl-item reveal"><div class="yr">2002</div><p>Benoît Toulotte devient <b>professeur adjoint</b> du Musubi Dojo, aux côtés de Jean Swaelens.</p></div>
+      <div class="tl-item reveal"><div class="yr">2018</div><p>Ouverture d'une <b>section enfants</b> à l'initiative de Benoît Toulotte et Frédéric Buchon.</p></div>
+      <div class="tl-item reveal"><div class="yr">2020</div><p>Jean Swaelens transmet sa charge de <b>Dojo Cho à Benoît Toulotte</b>, perpétuant l'esprit du dojo.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== VIDEOS ===================== -->
+<section class="section" id="videos">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center">
+      <p class="eyebrow" style="justify-content:center">Techniques</p>
+      <h2 class="h-sec">Le répertoire du dojo</h2>
+      <p class="lead" style="margin:0 auto">Un aperçu des techniques travaillées : mains nues, tanto (couteau), ken (sabre) et jo (bâton).</p>
+    </div>
+    <div class="vid-grid">
+      <div class="vid reveal"><span class="n">01</span><div><b>Shihonage</b><span>sur shomenuchi</span></div></div>
+      <div class="vid reveal"><span class="n">02</span><div><b>Kokyunage</b><span>sur ushiro katadori</span></div></div>
+      <div class="vid reveal"><span class="n">03</span><div><b>Koshinage</b><span>sur yokomenuchi</span></div></div>
+      <div class="vid reveal"><span class="n">04</span><div><b>Kotegaeshi</b><span>sur chudan tsuki</span></div></div>
+      <div class="vid reveal"><span class="n">05</span><div><b>Kotegaeshi + tanto</b><span>sur chudan tsuki</span></div></div>
+      <div class="vid reveal"><span class="n">06</span><div><b>Shihonage + tanto</b><span>sur yokomenuchi</span></div></div>
+      <div class="vid reveal"><span class="n">07</span><div><b>Udekimenage + tanto</b><span>sur yokomenuchi</span></div></div>
+      <div class="vid reveal"><span class="n">08</span><div><b>Kotaegaeshi + ken</b><span>sur shomenuchi</span></div></div>
+      <div class="vid reveal"><span class="n">09</span><div><b>Udekimenage &amp; shihonage + ken</b><span>sur yokomenuchi</span></div></div>
+      <div class="vid reveal"><span class="n">10</span><div><b>Kotaegaeshi + jo</b><span>sur chudan tsuki</span></div></div>
+      <div class="vid reveal"><span class="n">11</span><div><b>Shihonage + jo</b><span>sur yokomenuchi</span></div></div>
+      <div class="vid reveal"><span class="n">12</span><div><b>Jiuwaza</b><span>travail libre</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== NEWS / MEMORIAM ===================== -->
+<section class="section news" id="actualites">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Actualités &amp; stages</p>
+      <h2 class="h-sec">La vie du dojo</h2>
+    </div>
+    <div class="news-grid">
+      <div>
+        <div class="newscard reveal" style="margin-bottom:26px">
+          <p class="date">Reprise de saison</p>
+          <h3>Rentrée du tatami</h3>
+          <p>Le club est fermé en juillet et en août. La reprise des cours a lieu le lundi 24 août à 20h00, avec un premier cours d'honneur dirigé par Jikou Sugano, 6ᵉ dan Aïkikaï.</p>
+        </div>
+        <div class="newscard reveal">
+          <p class="date">Stages fédéraux</p>
+          <h3>Se former au-delà du dojo</h3>
+          <p>Nos pratiquants participent régulièrement aux stages de l'Association Francophone d'Aïkido, animés par de hauts gradés comme Christian Tissier Shihan, 8ᵉ dan.</p>
+          <a href="https://www.aikido.be" target="_blank" rel="noopener" class="btn btn-dark" style="margin-top:8px">Agenda des stages · aikido.be</a>
+        </div>
+      </div>
+      <div class="memoriam reveal">
+        <img class="mimg" src="images/Jean.png" alt="Jean Swaelens"/>
+        <p class="lbl">In Memoriam</p>
+        <h3>Jean Swaelens</h3>
+        <p class="yrs">Fondateur du Musubi Dojo · 5ᵉ dan Aïkikaï, Shidoin</p>
+        <p>Jean a créé le Musubi Dojo, nous a appris l'aïkido et nous en a transmis la passion. Nous lui en serons à jamais reconnaissants.</p>
+        <p class="mem-others">En mémoire également de Sugano Shihan (1939-2010) et Tamura Shihan (1933-2010).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section class="section contact" id="contact">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Rejoignez-nous</p>
+      <h2 class="h-sec" style="color:var(--paper)">Venez essayer,<br>c'est gratuit</h2>
+      <p class="lead" style="color:rgba(247,241,230,.75)">Deux cours d'essai offerts, sans engagement. Un simple training suffit pour commencer.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="cinfo reveal">
+        <div class="row">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>
+          <div><b>Téléphone</b><a href="tel:+32476565257">0476 / 56 52 57</a> · <span>065 / 33 65 93</span></div>
+        </div>
+        <div class="row">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          <div><b>E-mail</b><a href="mailto:benoit.toulotte@aikido.be">benoit.toulotte@aikido.be</a></div>
+        </div>
+        <div class="row">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div><b>Adresse</b><span>Académie de Police, Route d'Ath 25-35, 7050 Jurbise</span></div>
+        </div>
+        <div class="row">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3Z"/></svg>
+          <div><b>Suivez-nous</b><a href="https://www.facebook.com/MusubiDojoJurbise/" target="_blank" rel="noopener">facebook.com/MusubiDojoJurbise</a></div>
+        </div>
+      </div>
+      <form class="reveal" action="mailto:benoit.toulotte@aikido.be" method="post" enctype="text/plain">
+        <label for="nom">Nom</label>
+        <input id="nom" name="Nom" type="text" placeholder="Votre nom" required/>
+        <label for="mail">E-mail</label>
+        <input id="mail" name="Email" type="email" placeholder="vous@exemple.be" required/>
+        <label for="msg">Message</label>
+        <textarea id="msg" name="Message" placeholder="Je souhaite venir essayer un cours..."></textarea>
+        <button type="submit" class="btn btn-primary" style="justify-content:center">Envoyer ma demande</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="foot">
+    <div>
+      <a href="#accueil" class="brand" style="color:var(--paper)">
+        <img src="images/logo.png" alt="Musubi Dojo" style="width:52px;height:52px;border-radius:50%"/>
+        <span style="line-height:1.1"><b style="font-size:1.5rem">Musubi Dojo</b><span>Aïkido Traditionnel · Jurbise</span></span>
+      </a>
+      <p style="margin-top:18px">École d'Aïkido Aïkikaï, étude de l'aïkido traditionnel de O'Senseï Ueshiba. Affiliée à l'Association Francophone d'Aïkido.</p>
+      <div class="social">
+        <a href="https://www.facebook.com/MusubiDojoJurbise/" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div>
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="#aikido">L'Aïkido</a></li>
+        <li><a href="#dojo">Horaires &amp; tarifs</a></li>
+        <li><a href="#professeurs">Professeurs</a></li>
+        <li><a href="#histoire">Notre histoire</a></li>
+        <li><a href="#videos">Techniques</a></li>
+        <li><a href="#contact">Cours d'essai</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Liens utiles</h4>
+      <ul>
+        <li><a href="https://www.aikido.be" target="_blank" rel="noopener">Association Francophone d'Aïkido</a></li>
+        <li><a href="https://www.christiantissier.com" target="_blank" rel="noopener">Cercle Tissier</a></li>
+        <li><a href="http://www.aikikai.or.jp/eng/index.htm" target="_blank" rel="noopener">Hombu Dojo · Aikikai</a></li>
+        <li><a href="http://www.koshi.be" target="_blank" rel="noopener">Koshi Jette</a></li>
+        <li><a href="http://www.ffabaikido.fr/fr/" target="_blank" rel="noopener">Fédération Française d'Aïkido</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    © <span id="yr"></span> École d'Aïkido Musubi Dojo · Jurbise · Tous droits réservés ·
+    <a href="#accueil">Retour en haut</a>
+  </div>
+</footer>
+
+<button class="top" id="top" aria-label="Haut de page">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="m6 15 6-6 6 6"/></svg>
+</button>
+
+<script>
+// year
+document.getElementById('yr').textContent=new Date().getFullYear();
+// header scroll state + back to top
+var head=document.getElementById('head'),topBtn=document.getElementById('top');
+addEventListener('scroll',function(){
+  var y=scrollY;
+  head.classList.toggle('scrolled',y>40);
+  topBtn.classList.toggle('show',y>600);
+});
+// mobile menu
+var burger=document.getElementById('burger'),menu=document.getElementById('menu');
+burger.addEventListener('click',function(){menu.classList.toggle('open')});
+menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){menu.classList.remove('open')})});
+topBtn.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+// reveal on scroll
+var io=new IntersectionObserver(function(es){
+  es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})
+},{threshold:.12,rootMargin:'0px 0px -60px 0px'});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+</script>
+</body>
+</html>
