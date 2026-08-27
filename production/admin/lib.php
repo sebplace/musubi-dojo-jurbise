@@ -124,6 +124,7 @@ function admin_header($title, $active = '') {
         'stages'      => 'Stages',
         'galerie'     => 'Galerie',
         'professeurs' => 'Professeurs',
+        'techniques'  => 'Répertoire',
         'textes'      => 'Textes',
         'glossaire'   => 'Glossaire',
         'bibliographie' => 'Bibliographie',

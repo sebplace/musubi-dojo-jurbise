@@ -301,10 +301,12 @@ header.scrolled .burger span{background:var(--ink)}
 .vid b{font-weight:600;display:block}
 .vid span{font-size:.8rem;color:var(--muted)}
 .vid .vid-go{margin-left:auto;flex:0 0 auto;color:var(--vermillion);font-size:1.2rem;font-weight:700}
+.vid>picture{flex:0 0 auto;line-height:0}
+.vid-thumb{width:56px;height:56px;border-radius:10px;object-fit:cover;flex:0 0 auto}
 
 /* ---------- news / memoriam ---------- */
 .news{background:var(--paper-2)}
-.news-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:34px;margin-top:46px}
+.news-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:34px;margin-top:46px;align-items:center}
 .newscard{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:34px;box-shadow:0 10px 30px -24px rgba(23,19,13,.4)}
 .newscard .date{font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--vermillion);font-weight:600}
 .newscard h3{font-size:1.7rem;margin:8px 0 12px}
@@ -444,6 +446,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .stage-feat p{margin:0 0 6px;color:var(--muted);font-size:.95rem}
 
 /* ---------- bibliographie ---------- */
+.biblio-collapse{margin-top:30px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.biblio-collapse>summary{list-style:none;cursor:pointer;padding:17px 24px;display:flex;align-items:center;gap:12px;font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600}
+.biblio-collapse>summary::-webkit-details-marker{display:none}
+.biblio-collapse>summary::after{content:"+";margin-left:auto;font-size:1.6rem;color:var(--vermillion);line-height:1}
+.biblio-collapse[open]>summary::after{content:"\2212"}
+.biblio-collapse .bc{font-family:'Inter';font-size:.8rem;color:var(--muted);font-weight:500}
+.biblio-collapse .biblio-tabs{margin:0 24px}
+.biblio-collapse .biblio-grid{margin:22px 24px 26px}
 .biblio-tabs{display:flex;gap:10px;margin-top:34px;flex-wrap:wrap}
 .biblio-tab{padding:9px 18px;border-radius:999px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-weight:600;font-size:.85rem;color:var(--muted);transition:.25s}
 .biblio-tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
@@ -624,7 +634,7 @@ html.theme-or{
 /* cartes claires -> surfaces sombres */
 .theme-or .value,.theme-or .card,.theme-or .teacher,.theme-or .vid,.theme-or .newscard,
 .theme-or .stage-feat,.theme-or .stage-card,.theme-or .arme,.theme-or .belt,
-.theme-or .biblio-tab,.theme-or .gloss-sec,.theme-or .gloss-search input,.theme-or .afa-ev,
+.theme-or .biblio-tab,.theme-or .gloss-sec,.theme-or .gloss-search input,.theme-or .afa-ev,.theme-or .biblio-collapse,
 .theme-or .contact form input,.theme-or .contact form textarea,
 .theme-or .form-light input,.theme-or .form-light textarea{
   background:#1a140b;border-color:var(--line);color:var(--ink)
@@ -879,6 +889,8 @@ html.theme-or{
 </section>
 
 <!-- ===================== VIDEOS ===================== -->
+<?php $techMedia = array_filter($techniques, fn($t) => !empty($t['img']) || trim($t['url'] ?? '') !== ''); ?>
+<?php if ($techMedia): ?>
 <section class="section" id="videos">
   <div class="wrap">
     <div class="reveal" style="text-align:center">
@@ -887,16 +899,20 @@ html.theme-or{
       <p class="lead" style="margin:0 auto">Un aperçu des techniques travaillées : mains nues, tanto (couteau), ken (sabre) et jo (bâton).</p>
     </div>
     <div class="vid-grid">
-      <?php foreach ($techniques as $i => $tech): $u = trim($tech['url'] ?? ''); $n = str_pad($i + 1, 2, '0', STR_PAD_LEFT); ?>
+      <?php $ti = 0; foreach ($techniques as $tech): $u = trim($tech['url'] ?? ''); $img = $tech['img'] ?? ''; $ti++; $n = str_pad($ti, 2, '0', STR_PAD_LEFT);
+        $lead = $img !== '' ? picture($img, $tech['webp'] ?? '', $tech['t'] ?? '', 'class="vid-thumb" loading="lazy" width="56" height="56"') : '<span class="n">' . $n . '</span>';
+        $inner = $lead . '<div><b>' . e($tech['t'] ?? '') . '</b><span>' . e($tech['d'] ?? '') . '</span></div>';
+      ?>
       <?php if ($u !== ''): ?>
-      <a class="vid link reveal" href="<?php echo e($u); ?>" target="_blank" rel="noopener"><span class="n"><?php echo $n; ?></span><div><b><?php echo e($tech['t'] ?? ''); ?></b><span><?php echo e($tech['d'] ?? ''); ?></span></div><span class="vid-go" aria-hidden="true">▸</span></a>
+      <a class="vid link reveal" href="<?php echo e($u); ?>" target="_blank" rel="noopener"><?php echo $inner; ?><span class="vid-go" aria-hidden="true">▸</span></a>
       <?php else: ?>
-      <div class="vid reveal"><span class="n"><?php echo $n; ?></span><div><b><?php echo e($tech['t'] ?? ''); ?></b><span><?php echo e($tech['d'] ?? ''); ?></span></div></div>
+      <div class="vid reveal"><?php echo $inner; ?></div>
       <?php endif; ?>
       <?php endforeach; ?>
     </div>
   </div>
 </section>
+<?php endif; ?>
 
 <!-- ===================== GRADES & ARMES ===================== -->
 <section class="section grades waves" id="grades">
@@ -1028,14 +1044,17 @@ html.theme-or{
       <p class="eyebrow">Pour aller plus loin</p>
       <h2 class="h-sec">Bibliographie</h2>
       <p class="lead">Une sélection d'ouvrages de référence sur l'aïkido et les arts martiaux japonais, conseillés par le dojo.</p>
+    </div>
+    <details class="biblio-collapse reveal">
+      <summary>Afficher la sélection <span class="bc"><?php echo count($biblio); ?> ouvrages</span></summary>
       <div class="biblio-tabs">
         <button class="biblio-tab active" data-cat="all">Tous</button>
         <button class="biblio-tab" data-cat="fr">Français</button>
         <button class="biblio-tab" data-cat="en">Anglais</button>
         <button class="biblio-tab" data-cat="autres">Autres</button>
       </div>
-    </div>
-    <div class="biblio-grid reveal" id="biblio-grid"></div>
+      <div class="biblio-grid" id="biblio-grid"></div>
+    </details>
   </div>
 </section>
 

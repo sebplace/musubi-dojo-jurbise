@@ -165,6 +165,37 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         redirect('p=professeurs');
     }
 
+    /* ---------------- RÉPERTOIRE (TECHNIQUES) ---------------- */
+    if ($p === 'techniques') {
+        $items = load_json('techniques.json', []);
+        if ($do === 'delete') {
+            $i = (int) ($_POST['idx'] ?? -1);
+            if (isset($items[$i])) array_splice($items, $i, 1);
+            save_json('techniques.json', array_values($items));
+            flash('Technique supprimée.');
+        } elseif ($do === 'move') {
+            move_item($items, (int) $_POST['idx'], $_POST['dir'] ?? '');
+            save_json('techniques.json', array_values($items));
+        } elseif ($do === 'save') {
+            $idx  = $_POST['idx'] === '' ? null : (int) $_POST['idx'];
+            $item = ['t' => trim($_POST['t'] ?? ''), 'd' => trim($_POST['d'] ?? '')];
+            $url  = trim($_POST['url'] ?? '');
+            if ($url !== '') $item['url'] = $url;
+            $img = ''; $webp = '';
+            if ($idx !== null && isset($items[$idx])) { $img = $items[$idx]['img'] ?? ''; $webp = $items[$idx]['webp'] ?? ''; }
+            [$up, $upWebp, $upErr] = upload_image('img', 'technique');
+            if ($upErr) { flash($upErr, 'err'); redirect('p=techniques'); }
+            if ($up) { $img = $up; $webp = $upWebp ?? ''; }
+            if (!empty($_POST['remove_image'])) { $img = ''; $webp = ''; }
+            if ($img !== '') { $item['img'] = $img; $item['webp'] = $webp; }
+            if ($item['t'] === '') { flash('Le nom de la technique est obligatoire.', 'err'); redirect('p=techniques'); }
+            if ($idx !== null && isset($items[$idx])) $items[$idx] = $item; else $items[] = $item;
+            save_json('techniques.json', array_values($items));
+            flash('Technique enregistrée.');
+        }
+        redirect('p=techniques');
+    }
+
     /* ---------------- INFOS PRATIQUES ---------------- */
     if ($p === 'infos') {
         $infos = [
@@ -260,11 +291,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             unset($mem['founder']);
             save_json('memoriam.json', $mem);
             flash('In Memoriam mis à jour.');
-        } elseif ($do === 'techniques') {
-            $items = []; $ts = $_POST['t_t'] ?? []; $ds = $_POST['t_d'] ?? []; $us = $_POST['t_u'] ?? [];
-            for ($k = 0; $k < count($ts); $k++) { $t = trim($ts[$k]); if ($t === '') continue; $row = ['t' => $t, 'd' => trim($ds[$k] ?? '')]; $u = trim($us[$k] ?? ''); if ($u !== '') $row['url'] = $u; $items[] = $row; }
-            save_json('techniques.json', $items);
-            flash('Liste des techniques mise à jour.');
         } elseif ($do === 'armes') {
             $armes = load_json('armes.json', []);
             $armes['grades_intro'] = trim($_POST['grades_intro'] ?? '');
@@ -510,6 +536,47 @@ if ($p === 'professeurs') {
     exit;
 }
 
+if ($p === 'techniques') {
+    $items = load_json('techniques.json', []);
+    $edit  = isset($_GET['edit']) ? (int) $_GET['edit'] : null;
+    $cur   = ($edit !== null && isset($items[$edit])) ? $items[$edit] : null;
+    admin_header('Répertoire du dojo', 'techniques');
+    ?>
+    <p class="muted" style="max-width:720px">Ajoutez une image et/ou un lien vidéo à chaque technique. <b>Tant qu'aucune technique n'a d'image ni de vidéo, la section « Le répertoire du dojo » reste masquée sur le site public.</b></p>
+    <div class="cols">
+      <section class="panel">
+        <h2><?php echo $cur ? 'Modifier la technique' : 'Ajouter une technique'; ?></h2>
+        <form method="POST" enctype="multipart/form-data">
+          <?php echo csrf_field(); ?><input type="hidden" name="do" value="save"><input type="hidden" name="idx" value="<?php echo $edit !== null ? (int) $edit : ''; ?>">
+          <label>Technique <span class="req">*</span><input name="t" required value="<?php echo e($cur['t'] ?? ''); ?>" placeholder="Ex. Shihonage"></label>
+          <label>Attaque / précision<input name="d" value="<?php echo e($cur['d'] ?? ''); ?>" placeholder="Ex. sur shomenuchi"></label>
+          <label>Lien vidéo (optionnel)<input name="url" value="<?php echo e($cur['url'] ?? ''); ?>" placeholder="https://youtube.com/..."></label>
+          <?php if (!empty($cur['img'])): ?><p class="thumb"><img src="../<?php echo e($cur['img']); ?>" alt=""></p>
+          <label class="check"><input type="checkbox" name="remove_image" value="1"> Retirer l'image</label><?php endif; ?>
+          <label>Image (optionnel)<input type="file" name="img" accept="image/*"></label>
+          <div class="actions"><button type="submit">Enregistrer</button><?php if ($cur): ?> <a class="btn-sec" href="index.php?p=techniques">Annuler</a><?php endif; ?></div>
+        </form>
+      </section>
+      <section class="panel">
+        <h2>Techniques (<?php echo count($items); ?>)</h2>
+        <ul class="list">
+          <?php foreach ($items as $i => $it): ?>
+          <li>
+            <div class="li-main"><?php if (!empty($it['img'])): ?><img class="mini" src="../<?php echo e($it['img']); ?>" alt=""><?php endif; ?><span><b><?php echo e($it['t'] ?? ''); ?></b><small><?php echo e($it['d'] ?? ''); echo !empty($it['url']) ? ' · vidéo 🎬' : ''; ?></small></span></div>
+            <div class="li-act"><?php echo $reorder('techniques', $i, count($items)); ?>
+              <a class="btn-sec" href="index.php?p=techniques&edit=<?php echo $i; ?>">Modifier</a>
+              <form method="POST" onsubmit="return confirm('Supprimer cette technique ?');"><?php echo csrf_field(); ?><input type="hidden" name="do" value="delete"><input type="hidden" name="idx" value="<?php echo $i; ?>"><button class="danger">Supprimer</button></form>
+            </div>
+          </li>
+          <?php endforeach; ?>
+        </ul>
+      </section>
+    </div>
+    <?php
+    admin_footer();
+    exit;
+}
+
 if ($p === 'infos') {
     $infos = load_json('infos.json', []);
     admin_header('Infos pratiques', 'infos');
@@ -673,17 +740,6 @@ if ($p === 'textes') {
         </fieldset>
         <?php endfor; ?>
         <label>Texte d'hommage<textarea name="f_text" rows="3"><?php echo e($mem['founder_text'] ?? ''); ?></textarea></label>
-        <div class="actions"><button type="submit">Enregistrer</button></div>
-      </form>
-    </section>
-
-    <section class="panel">
-      <h2>Liste des techniques</h2>
-      <form method="POST"><?php echo csrf_field(); ?><input type="hidden" name="do" value="techniques">
-        <p class="muted" style="margin:0 0 10px">Le lien vidéo est facultatif. Sans lien, la technique s'affiche comme simple fiche ; avec un lien (YouTube, etc.), elle devient cliquable sur le site.</p>
-        <?php foreach ($techRows as $t): ?>
-        <div class="row-form"><input name="t_t[]" placeholder="Technique (ex. Shihonage)" value="<?php echo e($t['t'] ?? ''); ?>"><input name="t_d[]" placeholder="Attaque (ex. sur shomenuchi)" value="<?php echo e($t['d'] ?? ''); ?>"><input name="t_u[]" placeholder="Lien vidéo (optionnel)" value="<?php echo e($t['url'] ?? ''); ?>"></div>
-        <?php endforeach; ?>
         <div class="actions"><button type="submit">Enregistrer</button></div>
       </form>
     </section>
@@ -882,6 +938,7 @@ admin_header('Tableau de bord');
   <a class="tile" href="index.php?p=stages"><b><?php echo $nbStage; ?></b><span>Stages</span></a>
   <a class="tile" href="index.php?p=galerie"><b><?php echo $nbGal; ?></b><span>Photos de galerie</span></a>
   <a class="tile" href="index.php?p=professeurs"><b><?php echo $nbProf; ?></b><span>Professeurs</span></a>
+  <a class="tile" href="index.php?p=techniques"><b>技</b><span>Répertoire</span></a>
   <a class="tile" href="index.php?p=textes"><b>✎</b><span>Textes</span></a>
   <a class="tile" href="index.php?p=glossaire"><b>語</b><span>Glossaire</span></a>
   <a class="tile" href="index.php?p=bibliographie"><b>📚</b><span>Bibliographie</span></a>
