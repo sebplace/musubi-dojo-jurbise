@@ -10,3 +10,5 @@ production/data/auth.json
 production/data/messages.json
 
 production/sessions/sess_*
+
+production/data/cache/

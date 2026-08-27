@@ -12,6 +12,7 @@ $memoriam  = load_json('memoriam.json', []);
 $stagesAll = load_json('stages.json', []);
 $stages    = array_values(array_filter($stagesAll, fn($s) => ($s['date'] ?? '') >= date('Y-m-d')));
 usort($stages, fn($a, $b) => strcmp($a['date'] ?? '', $b['date'] ?? ''));
+$afa       = afa_events(8);
 $nextCourse = next_course($infos);
 $glossaire = load_json('glossaire.json', []);
 $biblio    = load_json('bibliographie.json', []);
@@ -584,6 +585,19 @@ body.has-alert header{top:42px}
 .form-light input:focus,.form-light textarea:focus{border-color:var(--vermillion);background:#fff}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:560px){.grid2{grid-template-columns:1fr}}
+/* agenda AFA (flux RSS) */
+.afa-list{display:grid;gap:12px;margin:40px auto 0;max-width:840px}
+.afa-ev{display:flex;align-items:center;gap:20px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 22px;transition:.25s;color:var(--ink)}
+.afa-ev:hover{border-color:var(--vermillion);transform:translateY(-2px);box-shadow:0 12px 26px -20px rgba(195,48,37,.4)}
+.afa-date{flex:0 0 auto;text-align:center;width:52px;line-height:1}
+.afa-date .dd{display:block;font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:var(--vermillion)}
+.afa-date .mm{display:block;font-size:.64rem;letter-spacing:.12em;color:var(--muted);margin-top:2px}
+.afa-ev .t{flex:1;font-weight:600;font-size:.98rem}
+.afa-ev .go{flex:0 0 auto;color:var(--vermillion);font-size:1.3rem;transition:.25s}
+.afa-ev:hover .go{transform:translateX(4px)}
+.afa-src{text-align:center;margin-top:22px;font-size:.92rem;color:var(--muted)}
+.afa-src a{color:var(--vermillion);font-weight:600}
+@media(max-width:560px){.afa-ev{gap:14px;padding:13px 16px}.afa-date{width:44px}.afa-date .dd{font-size:1.4rem}}
 
 /* ============================================================
    THEME "OR" — déclinaison nocturne & or (?theme=or)
@@ -611,15 +625,21 @@ html.theme-or{
 /* cartes claires -> surfaces sombres */
 .theme-or .value,.theme-or .card,.theme-or .teacher,.theme-or .vid,.theme-or .newscard,
 .theme-or .stage-feat,.theme-or .stage-card,.theme-or .arme,.theme-or .belt,
-.theme-or .biblio-tab,.theme-or .gloss-sec,.theme-or .gloss-search input,
+.theme-or .biblio-tab,.theme-or .gloss-sec,.theme-or .gloss-search input,.theme-or .afa-ev,
+.theme-or .contact form input,.theme-or .contact form textarea,
 .theme-or .form-light input,.theme-or .form-light textarea{
   background:#1a140b;border-color:var(--line);color:var(--ink)
 }
+.theme-or .contact form input::placeholder,.theme-or .contact form textarea::placeholder,
 .theme-or .form-light input::placeholder,.theme-or .gloss-search input::placeholder{color:#8f8266}
+.theme-or .contact form input:focus,.theme-or .contact form textarea:focus,
 .theme-or .form-light input:focus,.theme-or .form-light textarea:focus{background:#1f1810;border-color:var(--vermillion)}
+.theme-or .afa-ev:hover{border-color:var(--vermillion)}
 .theme-or .newscard{box-shadow:0 12px 34px -24px #000}
 .theme-or .card:hover,.theme-or .teacher:hover,.theme-or .arme:hover,
 .theme-or .vid.link:hover,.theme-or .stage-card:hover{border-color:var(--vermillion)}
+/* textes secondaires en var(--paper) sur fond sombre -> clairs */
+.theme-or .cinfo .row a,.theme-or .cinfo .row span,.theme-or .qc{color:#f4ebd7}
 /* textes d'accent posés sur l'or -> encre sombre */
 .theme-or .btn-primary{color:#17130d;box-shadow:0 14px 30px -12px rgba(233,203,110,.45)}
 .theme-or .btn-primary:hover{color:#17130d}
@@ -919,7 +939,7 @@ html.theme-or{
     <div class="reveal" style="text-align:center">
       <p class="eyebrow" style="justify-content:center">Agenda</p>
       <h2 class="h-sec">Prochains stages</h2>
-      <p class="lead" style="margin:0 auto">Les stages de l'Association Francophone d'Aïkido suivis par nos pratiquants.</p>
+      <p class="lead" style="margin:0 auto">Le calendrier des stages de l'Association Francophone d'Aïkido, mis à jour automatiquement.</p>
     </div>
     <?php if ($stages): ?>
     <div class="stages-list">
@@ -935,17 +955,28 @@ html.theme-or{
       </article>
       <?php endforeach; ?>
     </div>
+    <?php endif; ?>
+    <?php if ($afa): $moAbbr = [1 => 'JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUIN', 'JUIL', 'AOÛT', 'SEP', 'OCT', 'NOV', 'DÉC']; ?>
+    <div class="afa-list">
+      <?php foreach ($afa as $ev): ?>
+      <a class="afa-ev reveal" href="<?php echo e($ev['link']); ?>" target="_blank" rel="noopener">
+        <span class="afa-date"><span class="dd"><?php echo (int) date('j', $ev['ts']); ?></span><span class="mm"><?php echo $moAbbr[(int) date('n', $ev['ts'])]; ?></span></span>
+        <span class="t"><?php echo e($ev['title']); ?></span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+      <?php endforeach; ?>
+    </div>
+    <p class="afa-src reveal">Agenda complet et inscriptions sur <a href="https://afamanager.aikido.be/fr/evenement/" target="_blank" rel="noopener">le site de l'AFA</a>.</p>
     <?php
-      $events = array_map(function ($s) {
-          return ['@context' => 'https://schema.org', '@type' => 'Event', 'name' => $s['title'] ?? '', 'startDate' => $s['date'] ?? '',
-                  'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
-                  'location' => ['@type' => 'Place', 'name' => $s['place'] ?? 'Belgique'],
-                  'organizer' => ['@type' => 'Organization', 'name' => "Association Francophone d'Aïkido"]];
-      }, $stages);
+      $events = array_map(fn($ev) => ['@context' => 'https://schema.org', '@type' => 'Event', 'name' => $ev['title'],
+              'startDate' => date('Y-m-d', $ev['ts']), 'url' => $ev['link'],
+              'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+              'location' => ['@type' => 'Place', 'name' => 'Belgique'],
+              'organizer' => ['@type' => 'Organization', 'name' => "Association Francophone d'Aïkido"]], $afa);
       echo '<script type="application/ld+json">' . json_encode(count($events) === 1 ? $events[0] : $events, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
     ?>
-    <?php else: ?>
-    <p class="stages-empty reveal">Aucun stage n'est programmé pour l'instant. Retrouvez l'agenda complet des stages fédéraux sur <a href="https://www.aikido.be" target="_blank" rel="noopener" style="color:var(--vermillion);font-weight:600">aikido.be</a>.</p>
+    <?php elseif (!$stages): ?>
+    <p class="stages-empty reveal">Aucun stage n'est programmé pour l'instant. Retrouvez l'agenda complet des stages fédéraux sur <a href="https://afamanager.aikido.be/fr/evenement/" target="_blank" rel="noopener" style="color:var(--vermillion);font-weight:600">le site de l'AFA</a>.</p>
     <?php endif; ?>
   </div>
 </section>
@@ -1267,7 +1298,7 @@ document.querySelectorAll('.biblio-tab').forEach(function(tab){
 var gbody=document.getElementById('gloss-body'),gcount=document.getElementById('gloss-count'),ginput=document.getElementById('gloss-input');
 function renderGloss(q){
   var nq=norm(q);var total=0;
-  var openByDefault = !window.matchMedia('(max-width:640px)').matches; // ouvert sur desktop, replié sur mobile
+  var openByDefault = false; // toujours replié par défaut (desktop comme mobile) ; s'ouvre à la recherche
   var html=(window.GLOSS||[]).map(function(sec){
     var items=sec.items.filter(function(it){return !nq||norm(it.t).indexOf(nq)>-1||norm(it.p).indexOf(nq)>-1||norm(it.d).indexOf(nq)>-1;});
     if(!items.length)return '';

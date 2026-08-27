@@ -153,6 +153,72 @@ function fmt_date_fr($ts) {
     return (int) date('j', $ts) . ' ' . $months[(int) date('n', $ts)] . ' ' . date('Y', $ts);
 }
 
+/* ------------------------------------------------- Agenda AFA (flux RSS, avec cache) */
+function afa_events($limit = 8) {
+    $url       = 'https://afamanager.aikido.be/fr/evenement/rss';
+    $cacheDir  = DATA_DIR . '/cache';
+    $cacheFile = $cacheDir . '/afa-rss.xml';
+    $ttl       = 6 * 3600; // 6 heures
+    $xml       = null;
+
+    // 1) Cache encore frais ?
+    if (is_file($cacheFile) && (time() - filemtime($cacheFile)) < $ttl) {
+        $xml = @file_get_contents($cacheFile);
+    }
+    // 2) Sinon, on tente de rafraîchir le flux
+    if (!$xml) {
+        $fresh = afa_fetch($url);
+        if ($fresh && strpos($fresh, '<item') !== false) {
+            if (!is_dir($cacheDir)) @mkdir($cacheDir, 0775, true);
+            @file_put_contents($cacheFile, $fresh, LOCK_EX);
+            $xml = $fresh;
+        } elseif (is_file($cacheFile)) {
+            $xml = @file_get_contents($cacheFile); // repli sur cache périmé
+        }
+    }
+    if (!$xml) return [];
+
+    $prev = libxml_use_internal_errors(true);
+    $rss  = simplexml_load_string($xml);
+    libxml_use_internal_errors($prev);
+    if (!$rss || !isset($rss->channel->item)) return [];
+
+    $today  = strtotime('today');
+    $events = [];
+    foreach ($rss->channel->item as $it) {
+        $ts = strtotime((string) $it->pubDate);
+        if (!$ts || $ts < $today) continue;
+        $title = trim((string) $it->title);
+        if ($title === '') continue;
+        $events[] = ['title' => $title, 'link' => trim((string) $it->link), 'ts' => $ts];
+    }
+    usort($events, fn($a, $b) => $a['ts'] <=> $b['ts']);
+    return array_slice($events, 0, $limit);
+}
+
+function afa_fetch($url) {
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 5,
+            CURLOPT_CONNECTTIMEOUT => 4,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_USERAGENT      => 'MusubiDojo/1.0 (+https://jurbise.aikido.be)',
+        ]);
+        $resp = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        return ($resp !== false && $code >= 200 && $code < 400) ? $resp : null;
+    }
+    if (ini_get('allow_url_fopen')) {
+        $ctx  = stream_context_create(['http' => ['timeout' => 5, 'user_agent' => 'MusubiDojo/1.0']]);
+        $resp = @file_get_contents($url, false, $ctx);
+        return $resp !== false ? $resp : null;
+    }
+    return null;
+}
+
 /* ------------------------------------------------- Prochain cours */
 function next_course($infos) {
     $days = ['lundi' => 1, 'mardi' => 2, 'mercredi' => 3, 'jeudi' => 4, 'vendredi' => 5, 'samedi' => 6, 'dimanche' => 7];
