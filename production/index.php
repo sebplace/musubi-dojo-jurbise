@@ -1074,7 +1074,7 @@ html.theme-or{
 
 <!-- ===================== FACEBOOK ===================== -->
 <?php $fb = settings('facebook_url'); if ($fb): ?>
-<section class="section" id="facebook-feed">
+<section class="section dojo waves" id="facebook-feed">
   <div class="wrap">
     <div class="reveal" style="text-align:center">
       <p class="eyebrow" style="justify-content:center">Communauté</p>
