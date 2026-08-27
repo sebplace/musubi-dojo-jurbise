@@ -288,12 +288,6 @@ header.scrolled .burger span{background:var(--ink)}
 .tl-item .yr::after{content:"";position:absolute;right:-27px;top:10px;width:12px;height:12px;border-radius:50%;background:var(--vermillion);box-shadow:0 0 0 4px rgba(195,48,37,.2)}
 .tl-item p{margin:6px 0 0;color:rgba(247,241,230,.82);max-width:60ch}
 .tl-item p b{color:#fff;font-weight:600}
-.founder{display:flex;align-items:center;gap:24px;margin-top:48px;background:linear-gradient(160deg,#241d14,#17130d);border:1px solid rgba(176,141,87,.25);border-radius:var(--radius);padding:26px 30px}
-.founder img{width:100px;height:100px;border-radius:50%;object-fit:cover;flex:0 0 auto;border:2px solid rgba(176,141,87,.45)}
-.founder .lbl{font-family:'Inter';font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin:0 0 4px}
-.founder b{font-family:'Cormorant Garamond',serif;font-size:1.55rem;color:#fff;display:block;line-height:1.1}
-.founder p.d{margin:8px 0 0;color:rgba(247,241,230,.8);font-size:.92rem;max-width:54ch}
-@media(max-width:640px){.founder{flex-direction:column;text-align:center;padding:24px 22px}.founder p.d{max-width:none}}
 
 /* ---------- videos ---------- */
 .vid-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
@@ -414,6 +408,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .musubi-quote .nb{margin-top:8px;color:rgba(247,241,230,.5);font-size:.82rem;position:relative;z-index:2}
 
 /* ---------- memoriam masters ---------- */
+.mem-founders{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin:4px 0 2px}
+.mem-founders figure{margin:0;text-align:center}
+.mem-founders .mimg{margin:0 auto 10px}
+.mem-founders figcaption b{display:block;font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:#f4ebd7;line-height:1.15}
+.mem-founders figcaption span{display:block;font-size:.82rem;color:rgba(247,241,230,.62);margin-top:2px}
 .mem-masters{display:flex;justify-content:center;gap:30px;margin-top:22px}
 .mem-masters figure{margin:0;text-align:center}
 .mem-masters img{width:74px;height:74px;border-radius:50%;object-fit:cover;border:2px solid rgba(176,141,87,.5);filter:grayscale(.3)}
@@ -867,14 +866,6 @@ html.theme-or{
       <div class="tl-item reveal"><div class="yr"><?php echo e($h['year'] ?? ''); ?></div><p><?php echo rich($h['text'] ?? ''); ?></p></div>
       <?php endforeach; ?>
     </div>
-    <div class="founder reveal">
-      <picture><source srcset="images/anne.webp" type="image/webp"><img src="images/anne.jpg" alt="Anne Danloy, co-fondatrice du Musubi Dojo" width="100" height="100" loading="lazy" decoding="async"></picture>
-      <div>
-        <p class="lbl">Aux origines du dojo</p>
-        <b>Anne Danloy</b>
-        <p class="d">Co-fondatrice du Musubi Dojo en 1987 avec Jean Swaelens, tous deux formés par les maîtres japonais Sugano et Tamura Shihan.</p>
-      </div>
-    </div>
     <div class="musubi-quote reveal">
       <span class="mk jp" aria-hidden="true">結</span>
       <p class="lbl">Le sens de notre nom</p>
@@ -1007,12 +998,17 @@ html.theme-or{
         <?php endforeach; ?>
       </div>
       <div class="memoriam reveal">
-        <?php $mf = $memoriam['founder'] ?? []; ?>
-        <?php echo picture($mf['photo'] ?? '', $mf['webp'] ?? '', $mf['name'] ?? '', 'class="mimg" width="120" height="120"'); ?>
         <p class="lbl">In Memoriam</p>
-        <h3><?php echo e($mf['name'] ?? ''); ?></h3>
-        <p class="yrs"><?php echo e($mf['subtitle'] ?? ''); ?></p>
-        <p><?php echo e($mf['text'] ?? ''); ?></p>
+        <?php $founders = $memoriam['founders'] ?? (isset($memoriam['founder']) ? [$memoriam['founder']] : []); ?>
+        <div class="mem-founders">
+          <?php foreach ($founders as $mf): ?>
+          <figure>
+            <?php echo picture($mf['photo'] ?? '', $mf['webp'] ?? '', $mf['name'] ?? '', 'class="mimg" width="120" height="120"'); ?>
+            <figcaption><b><?php echo e($mf['name'] ?? ''); ?></b><span><?php echo e($mf['subtitle'] ?? ''); ?></span></figcaption>
+          </figure>
+          <?php endforeach; ?>
+        </div>
+        <?php if (!empty($memoriam['founder_text'])): ?><p><?php echo e($memoriam['founder_text']); ?></p><?php endif; ?>
         <?php if (!empty($memoriam['masters'])): ?>
         <div class="mem-masters">
           <?php foreach ($memoriam['masters'] as $ms): ?>

@@ -246,12 +246,18 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             flash('FAQ mise à jour.');
         } elseif ($do === 'memoriam') {
             $mem = load_json('memoriam.json', []);
-            $mem['founder'] = $mem['founder'] ?? [];
-            $mem['founder']['name'] = trim($_POST['f_name'] ?? '');
-            $mem['founder']['subtitle'] = trim($_POST['f_sub'] ?? '');
-            $mem['founder']['text'] = trim($_POST['f_text'] ?? '');
-            [$up, $upWebp, $upErr] = upload_image('f_photo', 'memoriam');
-            if ($up) { $mem['founder']['photo'] = $up; $mem['founder']['webp'] = $upWebp ?? ''; }
+            $founders = array_values($mem['founders'] ?? []);
+            for ($k = 0; $k < 2; $k++) {
+                $row = $founders[$k] ?? [];
+                $row['name']     = trim($_POST["mf{$k}_name"] ?? '');
+                $row['subtitle'] = trim($_POST["mf{$k}_sub"] ?? '');
+                [$up, $upWebp, $upErr] = upload_image("mf{$k}_photo", 'memoriam');
+                if ($up) { $row['photo'] = $up; $row['webp'] = $upWebp ?? ''; }
+                $founders[$k] = $row;
+            }
+            $mem['founders'] = array_values(array_filter($founders, fn($f) => trim($f['name'] ?? '') !== ''));
+            $mem['founder_text'] = trim($_POST['f_text'] ?? '');
+            unset($mem['founder']);
             save_json('memoriam.json', $mem);
             flash('In Memoriam mis à jour.');
         } elseif ($do === 'techniques') {
@@ -655,13 +661,18 @@ if ($p === 'textes') {
     </section>
 
     <section class="panel">
-      <h2>In Memoriam (fondateur)</h2>
+      <h2>In Memoriam (fondateurs)</h2>
       <form method="POST" enctype="multipart/form-data"><?php echo csrf_field(); ?><input type="hidden" name="do" value="memoriam">
-        <label>Nom<input name="f_name" value="<?php echo e($mem['founder']['name'] ?? ''); ?>"></label>
-        <label>Sous-titre<input name="f_sub" value="<?php echo e($mem['founder']['subtitle'] ?? ''); ?>"></label>
-        <label>Texte<textarea name="f_text" rows="3"><?php echo e($mem['founder']['text'] ?? ''); ?></textarea></label>
-        <?php if (!empty($mem['founder']['photo'])): ?><p class="thumb"><img src="../<?php echo e($mem['founder']['photo']); ?>" alt=""></p><?php endif; ?>
-        <label>Photo (laisser vide pour conserver)<input type="file" name="f_photo" accept="image/*"></label>
+        <?php $mfs = array_values($mem['founders'] ?? []); for ($k = 0; $k < 2; $k++): $cf = $mfs[$k] ?? []; ?>
+        <fieldset style="border:1px solid var(--line,#ddd);border-radius:8px;padding:12px;margin-bottom:14px">
+          <legend>Fondateur <?php echo $k + 1; ?></legend>
+          <label>Nom<input name="mf<?php echo $k; ?>_name" value="<?php echo e($cf['name'] ?? ''); ?>"></label>
+          <label>Sous-titre<input name="mf<?php echo $k; ?>_sub" value="<?php echo e($cf['subtitle'] ?? ''); ?>"></label>
+          <?php if (!empty($cf['photo'])): ?><p class="thumb"><img src="../<?php echo e($cf['photo']); ?>" alt=""></p><?php endif; ?>
+          <label>Photo (laisser vide pour conserver)<input type="file" name="mf<?php echo $k; ?>_photo" accept="image/*"></label>
+        </fieldset>
+        <?php endfor; ?>
+        <label>Texte d'hommage<textarea name="f_text" rows="3"><?php echo e($mem['founder_text'] ?? ''); ?></textarea></label>
         <div class="actions"><button type="submit">Enregistrer</button></div>
       </form>
     </section>
