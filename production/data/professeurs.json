@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Benoît Toulotte",
+    "role": "Dojo Cho · Professeur",
+    "grade": "6ᵉ dan Aïkikaï, Shidoin · Aide-moniteur Adeps",
+    "photo": "images/Enseignant_B.T.jpg",
+    "webp": "images/Enseignant_B.T.webp",
+    "pos": "50% 38%"
+  },
+  {
+    "name": "Frédéric Buchon",
+    "role": "Professeur enfants",
+    "grade": "2ᵉ dan Aïkikaï · Breveté Adeps",
+    "photo": "images/Enseignant_F.B.png",
+    "webp": "images/Enseignant_F.B.webp",
+    "pos": "50% 30%"
+  },
+  {
+    "name": "Gilles Modart",
+    "role": "Assistant",
+    "grade": "1ᵉʳ dan Aïkikaï",
+    "photo": "images/Enseignant_G.M.png",
+    "webp": "images/Enseignant_G.M.webp",
+    "pos": "50% 14%"
+  }
+]

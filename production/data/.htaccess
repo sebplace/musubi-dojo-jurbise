@@ -1,0 +1,8 @@
+# Les fichiers de données sont lus par le site côté serveur : pas d'accès web direct.
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+</IfModule>

@@ -1,0 +1,21 @@
+[
+  {
+    "date": "Reprise de saison",
+    "title": "Rentrée du tatami",
+    "text": "Le club est fermé en juillet et en août. La reprise des cours a lieu le lundi 24 août à 20h00, avec un premier cours d'honneur dirigé par Jikou Sugano, 6ᵉ dan Aïkikaï.",
+    "image": "",
+    "imageAlt": "",
+    "link": "",
+    "linkLabel": ""
+  },
+  {
+    "date": "Stages fédéraux",
+    "title": "Se former au-delà du dojo",
+    "text": "Nos pratiquants participent régulièrement aux stages de l'Association Francophone d'Aïkido, animés par de hauts gradés comme Christian Tissier Shihan, 8ᵉ dan.",
+    "image": "images/Stage_Thieu.jpg",
+    "imageWebp": "images/Stage_Thieu.webp",
+    "imageAlt": "Affiche du stage de Christian Tissier Shihan à Thieu",
+    "link": "https://www.aikido.be",
+    "linkLabel": "Agenda des stages · aikido.be"
+  }
+]

@@ -2,3 +2,6 @@ _*
 .DS_Store
 Thumbs.db
 
+
+production/inc/config.php
+production/inc/_contact-dev.log

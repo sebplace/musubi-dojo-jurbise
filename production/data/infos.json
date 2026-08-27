@@ -1,0 +1,21 @@
+{
+  "horaires": [
+    { "label": "Adultes · Lundi", "value": "20h00 à 22h00" },
+    { "label": "Adultes · Mercredi", "value": "20h00 à 22h00" },
+    { "label": "Adultes · Dimanche", "value": "10h30 à 12h30" },
+    { "label": "Enfants · Dimanche", "value": "9h30 à 10h30" }
+  ],
+  "horaires_note": "Adultes à partir de 14 ans.",
+  "tarifs": [
+    { "label": "Cotisation adultes", "value": "25 € / mois" },
+    { "label": "Étudiants (14 ans et +)", "value": "20 € / mois" },
+    { "label": "Assurance-licence AFA", "value": "35 € / an" }
+  ],
+  "tarifs_note": "Les 2 premiers cours d'essai sont gratuits.",
+  "inscription": [
+    { "label": "Certificat médical", "value": "Récent" },
+    { "label": "Essai", "value": "1 training" },
+    { "label": "Ensuite", "value": "Judogi + zori" }
+  ],
+  "inscription_note": "Affilié à l'Association Francophone d'Aïkido."
+}
