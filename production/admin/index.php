@@ -255,8 +255,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             save_json('memoriam.json', $mem);
             flash('In Memoriam mis à jour.');
         } elseif ($do === 'techniques') {
-            $items = []; $ts = $_POST['t_t'] ?? []; $ds = $_POST['t_d'] ?? [];
-            for ($k = 0; $k < count($ts); $k++) { $t = trim($ts[$k]); if ($t === '') continue; $items[] = ['t' => $t, 'd' => trim($ds[$k] ?? '')]; }
+            $items = []; $ts = $_POST['t_t'] ?? []; $ds = $_POST['t_d'] ?? []; $us = $_POST['t_u'] ?? [];
+            for ($k = 0; $k < count($ts); $k++) { $t = trim($ts[$k]); if ($t === '') continue; $row = ['t' => $t, 'd' => trim($ds[$k] ?? '')]; $u = trim($us[$k] ?? ''); if ($u !== '') $row['url'] = $u; $items[] = $row; }
             save_json('techniques.json', $items);
             flash('Liste des techniques mise à jour.');
         } elseif ($do === 'armes') {
@@ -669,8 +669,9 @@ if ($p === 'textes') {
     <section class="panel">
       <h2>Liste des techniques</h2>
       <form method="POST"><?php echo csrf_field(); ?><input type="hidden" name="do" value="techniques">
+        <p class="muted" style="margin:0 0 10px">Le lien vidéo est facultatif. Sans lien, la technique s'affiche comme simple fiche ; avec un lien (YouTube, etc.), elle devient cliquable sur le site.</p>
         <?php foreach ($techRows as $t): ?>
-        <div class="row-form"><input name="t_t[]" placeholder="Technique (ex. Shihonage)" value="<?php echo e($t['t'] ?? ''); ?>"><input name="t_d[]" placeholder="Attaque (ex. sur shomenuchi)" value="<?php echo e($t['d'] ?? ''); ?>"></div>
+        <div class="row-form"><input name="t_t[]" placeholder="Technique (ex. Shihonage)" value="<?php echo e($t['t'] ?? ''); ?>"><input name="t_d[]" placeholder="Attaque (ex. sur shomenuchi)" value="<?php echo e($t['d'] ?? ''); ?>"><input name="t_u[]" placeholder="Lien vidéo (optionnel)" value="<?php echo e($t['url'] ?? ''); ?>"></div>
         <?php endforeach; ?>
         <div class="actions"><button type="submit">Enregistrer</button></div>
       </form>

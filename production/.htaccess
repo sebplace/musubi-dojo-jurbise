@@ -1,3 +1,11 @@
+# Désactiver mod_pagespeed (peut casser le markup <picture> et les wrappers)
+<IfModule pagespeed_module>
+  ModPagespeed off
+</IfModule>
+<IfModule mod_pagespeed.c>
+  ModPagespeed off
+</IfModule>
+
 # Page d'erreur personnalisée
 ErrorDocument 404 /404.html
 

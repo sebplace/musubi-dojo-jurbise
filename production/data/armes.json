@@ -1,5 +1,5 @@
 {
-  "grades_intro": "En aïkido traditionnel, la progression se fait par grades kyu (élève), puis dan (ceinture noire), passés devant la Commission Fédérale des Grades de l'AFA et validés par le Hombu Dojo, l'Aïkikaï de Tokyo.",
+  "grades_intro": "En aïkido traditionnel, la progression se fait par grades kyu (élève), puis dan (ceinture noire). Les grades dan sont examinés par la Commission Technique de l'AFA et validés par le Hombu Dojo, l'Aïkikaï de Tokyo.",
   "belts": [
     {"label":"Débutant","sub":"Premiers pas sur le tatami","bar":"#f2ede1"},
     {"label":"6ᵉ à 4ᵉ kyu","sub":"Élève","bar":"#e7dcc6"},

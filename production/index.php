@@ -285,17 +285,25 @@ header.scrolled .burger span{background:var(--ink)}
 .tl-item .yr::after{content:"";position:absolute;right:-27px;top:10px;width:12px;height:12px;border-radius:50%;background:var(--vermillion);box-shadow:0 0 0 4px rgba(195,48,37,.2)}
 .tl-item p{margin:6px 0 0;color:rgba(247,241,230,.82);max-width:60ch}
 .tl-item p b{color:#fff;font-weight:600}
+.founder{display:flex;align-items:center;gap:24px;margin-top:48px;background:linear-gradient(160deg,#241d14,#17130d);border:1px solid rgba(176,141,87,.25);border-radius:var(--radius);padding:26px 30px}
+.founder img{width:100px;height:100px;border-radius:50%;object-fit:cover;flex:0 0 auto;border:2px solid rgba(176,141,87,.45)}
+.founder .lbl{font-family:'Inter';font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin:0 0 4px}
+.founder b{font-family:'Cormorant Garamond',serif;font-size:1.55rem;color:#fff;display:block;line-height:1.1}
+.founder p.d{margin:8px 0 0;color:rgba(247,241,230,.8);font-size:.92rem;max-width:54ch}
+@media(max-width:640px){.founder{flex-direction:column;text-align:center;padding:24px 22px}.founder p.d{max-width:none}}
 
 /* ---------- videos ---------- */
 .vid-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
 .vid{
   background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;
-  display:flex;gap:14px;align-items:center;transition:.3s;font-size:.96rem
+  display:flex;gap:14px;align-items:center;transition:.3s;font-size:.96rem;color:var(--ink);text-decoration:none
 }
-.vid:hover{border-color:var(--vermillion);transform:translateY(-4px);box-shadow:0 14px 30px -20px rgba(195,48,37,.5)}
+.vid.link{cursor:pointer}
+.vid.link:hover{border-color:var(--vermillion);transform:translateY(-4px);box-shadow:0 14px 30px -20px rgba(195,48,37,.5)}
 .vid .n{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--vermillion);flex:0 0 auto;width:34px}
 .vid b{font-weight:600;display:block}
 .vid span{font-size:.8rem;color:var(--muted)}
+.vid .vid-go{margin-left:auto;flex:0 0 auto;color:var(--vermillion);font-size:1.2rem;font-weight:700}
 
 /* ---------- news / memoriam ---------- */
 .news{background:var(--paper-2)}
@@ -373,9 +381,11 @@ footer{background:#0f0c08;color:rgba(247,241,230,.7)}
 @media(max-width:640px){
   .section{padding:76px 0}
   .menu{
-    position:fixed;inset:0 0 0 auto;width:min(80vw,320px);background:var(--ink);
+    position:fixed;top:0;right:0;bottom:auto;left:auto;height:100vh;height:100dvh;
+    width:min(80vw,320px);background:var(--ink);
     flex-direction:column;align-items:stretch;justify-content:flex-start;gap:6px;
-    padding:90px 22px;transform:translateX(100%);transition:.35s;box-shadow:var(--shadow)
+    padding:90px 22px;transform:translateX(100%);transition:.35s;box-shadow:var(--shadow);
+    overflow-y:auto;z-index:65
   }
   .menu.open{transform:none}
   .menu a{color:var(--paper)!important;padding:14px 16px;border-radius:12px}
@@ -659,7 +669,7 @@ body.has-alert header{top:42px}
     <div class="reveal" style="text-align:center">
       <p class="eyebrow" style="justify-content:center">Le Dojo</p>
       <h2 class="h-sec">Horaires, tarifs &amp; inscription</h2>
-      <p class="lead" style="margin:0 auto">L'école est en « portes ouvertes » pendant ses dix mois d'ouverture. Venez pousser la porte du tatami.</p>
+      <p class="lead" style="margin:0 auto">L'école est en « portes ouvertes » pendant ses dix mois d'ouverture. Venez pousser la porte du dojo et fouler le tatami.</p>
     </div>
 
     <div class="cards-3">
@@ -773,6 +783,14 @@ body.has-alert header{top:42px}
       <div class="tl-item reveal"><div class="yr"><?php echo e($h['year'] ?? ''); ?></div><p><?php echo rich($h['text'] ?? ''); ?></p></div>
       <?php endforeach; ?>
     </div>
+    <div class="founder reveal">
+      <picture><source srcset="images/anne.webp" type="image/webp"><img src="images/anne.jpg" alt="Anne Danloy, co-fondatrice du Musubi Dojo" width="100" height="100" loading="lazy" decoding="async"></picture>
+      <div>
+        <p class="lbl">Aux origines du dojo</p>
+        <b>Anne Danloy</b>
+        <p class="d">Co-fondatrice du Musubi Dojo en 1987 avec Jean Swaelens, tous deux formés par les maîtres japonais Sugano et Tamura Shihan.</p>
+      </div>
+    </div>
     <div class="musubi-quote reveal">
       <span class="mk jp" aria-hidden="true">結</span>
       <p class="lbl">Le sens de notre nom</p>
@@ -794,8 +812,12 @@ body.has-alert header{top:42px}
       <p class="lead" style="margin:0 auto">Un aperçu des techniques travaillées : mains nues, tanto (couteau), ken (sabre) et jo (bâton).</p>
     </div>
     <div class="vid-grid">
-      <?php foreach ($techniques as $i => $tech): ?>
-      <div class="vid reveal"><span class="n"><?php echo str_pad($i + 1, 2, '0', STR_PAD_LEFT); ?></span><div><b><?php echo e($tech['t'] ?? ''); ?></b><span><?php echo e($tech['d'] ?? ''); ?></span></div></div>
+      <?php foreach ($techniques as $i => $tech): $u = trim($tech['url'] ?? ''); $n = str_pad($i + 1, 2, '0', STR_PAD_LEFT); ?>
+      <?php if ($u !== ''): ?>
+      <a class="vid link reveal" href="<?php echo e($u); ?>" target="_blank" rel="noopener"><span class="n"><?php echo $n; ?></span><div><b><?php echo e($tech['t'] ?? ''); ?></b><span><?php echo e($tech['d'] ?? ''); ?></span></div><span class="vid-go" aria-hidden="true">▸</span></a>
+      <?php else: ?>
+      <div class="vid reveal"><span class="n"><?php echo $n; ?></span><div><b><?php echo e($tech['t'] ?? ''); ?></b><span><?php echo e($tech['d'] ?? ''); ?></span></div></div>
+      <?php endif; ?>
       <?php endforeach; ?>
     </div>
   </div>
