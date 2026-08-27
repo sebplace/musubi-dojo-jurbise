@@ -584,8 +584,16 @@ body.has-alert header{top:42px}
 .stages-empty{margin-top:40px;text-align:center;color:var(--muted);max-width:60ch;margin-left:auto;margin-right:auto}
 
 /* ---------- facebook ---------- */
-.fb-wrap{display:flex;justify-content:center;margin-top:40px}
-.fb-wrap iframe{border:0;overflow:hidden;border-radius:var(--radius);box-shadow:var(--shadow);max-width:100%}
+.fb-card{display:flex;align-items:center;gap:22px;max-width:560px;margin:40px auto 0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 26px;transition:.3s;color:var(--ink)}
+.fb-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:#1877f2}
+.fb-card .fb-ic{flex:0 0 auto;width:54px;height:54px;border-radius:14px;background:#1877f2;display:grid;place-items:center}
+.fb-card .fb-ic svg{width:28px;height:28px;fill:#fff}
+.fb-card .fb-txt{flex:1;line-height:1.35}
+.fb-card .fb-txt b{display:block;font-family:'Cormorant Garamond',serif;font-size:1.35rem}
+.fb-card .fb-txt span{color:var(--muted);font-size:.9rem}
+.fb-card .fb-go{flex:0 0 auto;color:#1877f2;font-size:1.5rem;font-weight:700;transition:.25s}
+.fb-card:hover .fb-go{transform:translateX(4px)}
+@media(max-width:560px){.fb-card{flex-direction:column;text-align:center;gap:14px}}
 
 /* ---------- light form (essai) ---------- */
 .form-light{display:grid;gap:16px}
@@ -634,7 +642,7 @@ html.theme-or{
 /* cartes claires -> surfaces sombres */
 .theme-or .value,.theme-or .card,.theme-or .teacher,.theme-or .vid,.theme-or .newscard,
 .theme-or .stage-feat,.theme-or .stage-card,.theme-or .arme,.theme-or .belt,
-.theme-or .biblio-tab,.theme-or .gloss-sec,.theme-or .gloss-search input,.theme-or .afa-ev,.theme-or .biblio-collapse,
+.theme-or .biblio-tab,.theme-or .gloss-sec,.theme-or .gloss-search input,.theme-or .afa-ev,.theme-or .biblio-collapse,.theme-or .fb-card,
 .theme-or .contact form input,.theme-or .contact form textarea,
 .theme-or .form-light input,.theme-or .form-light textarea{
   background:#1a140b;border-color:var(--line);color:var(--ink)
@@ -1100,9 +1108,11 @@ html.theme-or{
       <h2 class="h-sec">Suivez-nous sur Facebook</h2>
       <p class="lead" style="margin:0 auto">Actualités, photos et vie du club au quotidien.</p>
     </div>
-    <div class="fb-wrap reveal">
-      <iframe title="Page Facebook du Musubi Dojo" src="https://www.facebook.com/plugins/page.php?href=<?php echo urlencode($fb); ?>&tabs=timeline&width=500&height=560&smallheader=false&adaptcontainerwidth=true&hidecover=false&showfacepile=true" width="500" height="560" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" loading="lazy"></iframe>
-    </div>
+    <a class="fb-card reveal" href="<?php echo e($fb); ?>" target="_blank" rel="noopener">
+      <span class="fb-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg></span>
+      <span class="fb-txt"><b>Musubi Dojo Jurbise</b><span>Actualités, photos et publications du club sur Facebook</span></span>
+      <span class="fb-go" aria-hidden="true">&rarr;</span>
+    </a>
   </div>
 </section>
 <?php endif; ?>
