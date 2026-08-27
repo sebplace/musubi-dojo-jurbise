@@ -21,9 +21,11 @@ $armes     = load_json('armes.json', []);
 $liens     = load_json('liens.json', []);
 $lib       = load_json('libelles.json', []);
 $alertOn = settings('alert_enabled') && trim((string) settings('alert_text')) !== '';
+$themeOr = (($_GET['theme'] ?? '') === 'or');
+$logoImg = $themeOr ? 'images/logo-or.png' : 'images/logo.png';
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr"<?php echo $themeOr ? ' class="theme-or"' : ''; ?>>
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -582,7 +584,69 @@ body.has-alert header{top:42px}
 .form-light input:focus,.form-light textarea:focus{border-color:var(--vermillion);background:#fff}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:560px){.grid2{grid-template-columns:1fr}}
-</style><?php if (config('analytics')) echo "\n" . config('analytics') . "\n"; ?>
+
+/* ============================================================
+   THEME "OR" — déclinaison nocturne & or (?theme=or)
+   Fond noir chaud + accents or, d'après le logo doré du dojo.
+   ============================================================ */
+html.theme-or{
+  --ink:#f4ebd7;          /* texte clair */
+  --paper:#0e0b06;        /* fond sombre principal */
+  --paper-2:#141009;      /* sections alternées */
+  --paper-3:#241c10;      /* puces / vignettes */
+  --vermillion:#e6c25c;   /* accent principal = or */
+  --vermillion-d:#d3a93f;
+  --gold:#e9cb6e;
+  --muted:#b7a886;
+  --line:rgba(233,203,110,.16);
+  --shadow:0 20px 50px -22px rgba(0,0,0,.8);
+}
+/* surfaces qui utilisaient --ink en FOND : les garder sombres */
+.theme-or .strip{background:#100c06;color:#f4ebd7}
+.theme-or .history{background:#141009;color:#f4ebd7}
+.theme-or .contact{background:#100c06;color:#f4ebd7}
+.theme-or .biblio-tab.active{background:var(--vermillion);color:#17130d;border-color:var(--vermillion)}
+/* header translucide au scroll */
+.theme-or header.scrolled{background:rgba(14,11,6,.92);box-shadow:0 1px 0 rgba(233,203,110,.16)}
+/* cartes claires -> surfaces sombres */
+.theme-or .value,.theme-or .card,.theme-or .teacher,.theme-or .vid,.theme-or .newscard,
+.theme-or .stage-feat,.theme-or .stage-card,.theme-or .arme,.theme-or .belt,
+.theme-or .biblio-tab,.theme-or .gloss-sec,.theme-or .gloss-search input,
+.theme-or .form-light input,.theme-or .form-light textarea{
+  background:#1a140b;border-color:var(--line);color:var(--ink)
+}
+.theme-or .form-light input::placeholder,.theme-or .gloss-search input::placeholder{color:#8f8266}
+.theme-or .form-light input:focus,.theme-or .form-light textarea:focus{background:#1f1810;border-color:var(--vermillion)}
+.theme-or .newscard{box-shadow:0 12px 34px -24px #000}
+.theme-or .card:hover,.theme-or .teacher:hover,.theme-or .arme:hover,
+.theme-or .vid.link:hover,.theme-or .stage-card:hover{border-color:var(--vermillion)}
+/* textes d'accent posés sur l'or -> encre sombre */
+.theme-or .btn-primary{color:#17130d;box-shadow:0 14px 30px -12px rgba(233,203,110,.45)}
+.theme-or .btn-primary:hover{color:#17130d}
+.theme-or .menu a.cta{color:#17130d!important}
+.theme-or .mobile-cta{color:#17130d}
+.theme-or .mobile-cta svg{stroke:#17130d}
+.theme-or .alertbar,.theme-or .skip{color:#17130d}
+.theme-or .top{color:#17130d}
+.theme-or .top svg{stroke:#17130d}
+.theme-or .qc:hover{color:#17130d}
+/* ensō + kanji filigrane -> or */
+.theme-or .enso svg path{stroke:#e9cb6e}
+.theme-or .enso svg{filter:drop-shadow(0 20px 40px rgba(233,203,110,.16))}
+.theme-or .hero-kanji{color:rgba(233,203,110,.09)}
+.theme-or .musubi-quote .mk{color:rgba(233,203,110,.12)}
+/* panneaux sombres en gradient : texte clair garanti */
+.theme-or .memoriam{color:#f4ebd7}
+.theme-or .musubi-quote b.term{color:#f4ebd7}
+/* footer (toujours sombre) : textes clairs + icônes or */
+.theme-or .foot h3{color:#f4ebd7}
+.theme-or .social svg{fill:#e9cb6e}
+/* menu mobile : panneau sombre + liens clairs */
+@media(max-width:640px){
+  .theme-or .menu{background:#141009}
+  .theme-or .menu a{color:#f4ebd7!important}
+}
+</style><?php if (config('analytics')) echo "\n" . config('analytics') . "\n"; ?>
 <?php if (turnstile_enabled()): ?><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script><?php endif; ?>
 </head>
 <body class="no-js<?php echo $alertOn ? ' has-alert' : ''; ?>">
@@ -593,7 +657,7 @@ body.has-alert header{top:42px}
 <header id="head">
   <div class="nav">
     <a href="#accueil" class="brand">
-      <img src="images/logo.png" alt="Blason Musubi Dojo"/>
+      <img src="<?php echo $logoImg; ?>" alt="Blason Musubi Dojo"/>
       <span style="line-height:1"><b>Musubi Dojo</b><span>Aïkido · Jurbise</span></span>
     </a>
     <nav class="menu" id="menu" aria-label="Navigation principale">
@@ -738,9 +802,9 @@ body.has-alert header{top:42px}
       <p class="lead" style="margin:0 auto">Une transmission directe, dans la lignée de Sugano Shihan et du Hombu Dojo de Tokyo.</p>
     </div>
     <div class="teachers">
-      <?php foreach ($profs as $p): ?>
+      <?php foreach ($profs as $p): $pPhoto = $p['photo'] ?? ''; $pWebp = $p['webp'] ?? ''; if ($themeOr) { $pPhoto = preg_replace('#(audrey|roberto)\.jpg$#', '$1-or.jpg', $pPhoto); $pWebp = preg_replace('#(audrey|roberto)\.webp$#', '$1-or.webp', $pWebp); } ?>
       <div class="teacher reveal">
-        <div class="ph"><?php echo picture($p['photo'] ?? '', $p['webp'] ?? '', 'Portrait de ' . ($p['name'] ?? ''), 'loading="lazy" width="400" height="300" style="object-position:' . e($p['pos'] ?? '50% 30%') . '"'); ?></div>
+        <div class="ph"><?php echo picture($pPhoto, $pWebp, 'Portrait de ' . ($p['name'] ?? ''), 'loading="lazy" width="400" height="300" style="object-position:' . e($p['pos'] ?? '50% 30%') . '"'); ?></div>
         <div class="body">
           <span class="role"><?php echo e($p['role'] ?? ''); ?></span>
           <h3><?php echo e($p['name'] ?? ''); ?></h3>
@@ -776,7 +840,7 @@ body.has-alert header{top:42px}
   <div class="wrap" style="position:relative;z-index:2">
     <div class="reveal">
       <p class="eyebrow">Notre histoire</p>
-      <h2 class="h-sec" style="color:var(--paper)">Bientôt quatre décennies<br>sur le tatami</h2>
+      <h2 class="h-sec" style="color:#f4ebd7">Bientôt quatre décennies<br>sur le tatami</h2>
     </div>
     <div class="tl">
       <?php foreach ($histoire as $h): ?>
@@ -1033,7 +1097,7 @@ body.has-alert header{top:42px}
   <div class="wrap">
     <div class="reveal">
       <p class="eyebrow">Rejoignez-nous</p>
-      <h2 class="h-sec" style="color:var(--paper)">Venez essayer,<br>c'est gratuit</h2>
+      <h2 class="h-sec" style="color:#f4ebd7">Venez essayer,<br>c'est gratuit</h2>
       <p class="lead" style="color:rgba(247,241,230,.75)">Deux cours d'essai offerts, sans engagement. Un simple training suffit pour commencer.</p>
     </div>
     <div class="contact-grid">
@@ -1089,8 +1153,8 @@ body.has-alert header{top:42px}
 <footer>
   <div class="foot">
     <div>
-      <a href="#accueil" class="brand" style="color:var(--paper)">
-        <img src="images/logo.png" alt="Musubi Dojo" style="width:52px;height:52px;border-radius:50%"/>
+      <a href="#accueil" class="brand" style="color:#f4ebd7">
+        <img src="<?php echo $logoImg; ?>" alt="Musubi Dojo" style="width:52px;height:52px;border-radius:50%"/>
         <span style="line-height:1.1"><b style="font-size:1.5rem">Musubi Dojo</b><span>Aïkido Traditionnel · Jurbise</span></span>
       </a>
       <p style="margin-top:18px"><?php echo e($lib['footer_tagline'] ?? ''); ?></p>
