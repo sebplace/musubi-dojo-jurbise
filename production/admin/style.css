@@ -96,3 +96,18 @@ button.danger:hover{background:var(--vermillion);color:#fff}
 .login .a-brand small{color:var(--gold)}
 .center{justify-content:center}
 .login button{width:100%;margin-top:6px;padding:13px}
+
+/* badges & messages */
+.badge{background:#fff;color:var(--vermillion);border-radius:999px;padding:1px 8px;font-size:.72rem;font-weight:700;margin-left:4px}
+.tbadge{display:inline-block;background:var(--vermillion);color:#fff;border-radius:999px;padding:2px 9px;font-size:.9rem;font-weight:700;vertical-align:middle;margin-left:6px;font-family:'Segoe UI',sans-serif}
+.msgs{display:flex;flex-direction:column;gap:14px}
+.msg{background:#fff;border:1px solid var(--line);border-left:4px solid var(--line);border-radius:12px;padding:18px 20px}
+.msg.unread{border-left-color:var(--vermillion);background:#fffdfb}
+.msg-top{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.msg-top b{font-size:1.05rem}
+.msg-top time{margin-left:auto;color:var(--muted);font-size:.85rem}
+.tag{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--paper2);color:var(--muted);padding:3px 9px;border-radius:999px}
+.tag.essai{background:var(--vermillion);color:#fff}
+.msg-meta{color:var(--muted);font-size:.9rem;margin:8px 0 0}
+.msg-body{margin:10px 0 0;white-space:pre-line}
+.panel hr{border:0;border-top:1px solid var(--line);margin:14px 0}

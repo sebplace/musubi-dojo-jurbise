@@ -94,4 +94,42 @@ besoin d'un envoi authentifié (SMTP), on peut faire évoluer `contact.php` vers
 - Le panneau d'admin est protégé par mot de passe, avec jeton anti-CSRF et sessions.
 - Les uploads sont limités aux images (JPEG, PNG, WebP, GIF), 8 Mo maximum.
 
-Bonne mise en ligne. En cas de doute, gardez une copie de sauvegarde du dossier `data/`.
+## 8. Le panneau d'administration en détail
+
+Une fois connecté sur `/admin/`, vous disposez des rubriques :
+
+- **Messages** : toutes les demandes reçues (contact et cours d'essai), avec statut lu / non lu.
+- **Actualités**, **Stages** (agenda daté, les stages passés se masquent seuls), **Galerie**,
+  **Professeurs**, **Textes** (présentation de l'aïkido, frise historique, FAQ, In Memoriam),
+  **Infos pratiques** (horaires, tarifs, inscription).
+- **Réglages** :
+  - **Bannière d'alerte** : un bandeau rouge en haut du site (ex. « Cours annulé ce soir »).
+  - **Mot de passe** : changez votre mot de passe sans toucher au code.
+  - **Sauvegarde** : téléchargez une archive `.zip` de tout le contenu (textes + photos).
+
+Les photos envoyées sont automatiquement redimensionnées et converties en WebP (site plus léger).
+
+## 9. Anti-spam (facultatif mais recommandé)
+
+Les formulaires sont déjà protégés par un piège caché et un jeton anti-robot. Pour une
+protection renforcée, activez **Cloudflare Turnstile** (gratuit) :
+1. Créez un site sur https://dash.cloudflare.com/ > Turnstile et récupérez les deux clés.
+2. Renseignez `turnstile_site` et `turnstile_secret` dans `inc/config.php`.
+
+## 10. Statistiques de visite (facultatif)
+
+Vous pouvez suivre la fréquentation de façon respectueuse de la vie privée :
+- **Solution hébergée chez vous (Matomo)** : o2switch fournit PHP + MySQL. Installez Matomo
+  (via l'auto-installateur cPanel ou manuellement), créez un site, puis collez le code de
+  suivi fourni dans la clé `analytics` de `inc/config.php`. Il sera injecté automatiquement.
+- **Alternative légère** : un extrait Plausible ou autre peut aussi être collé dans `analytics`.
+
+## 11. Pages légales
+
+Les pages **Mentions légales** et **Politique de confidentialité (RGPD)** sont incluses et
+liées en pied de page. Adaptez les coordonnées via les clés `legal_*` de `inc/config.php`.
+
+---
+Bonne mise en ligne. En cas de doute, gardez une copie de sauvegarde du dossier `data/`
+(ou utilisez le bouton de sauvegarde du panneau d'administration).
+

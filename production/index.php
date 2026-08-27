@@ -5,6 +5,15 @@ $infos   = load_json('infos.json', []);
 $profs   = load_json('professeurs.json', []);
 $galerie = load_json('galerie.json', []);
 $actus   = load_json('actualites.json', []);
+$aikido    = load_json('aikido.json', []);
+$histoire  = load_json('histoire.json', []);
+$faq       = load_json('faq.json', []);
+$memoriam  = load_json('memoriam.json', []);
+$stagesAll = load_json('stages.json', []);
+$stages    = array_values(array_filter($stagesAll, fn($s) => ($s['date'] ?? '') >= date('Y-m-d')));
+usort($stages, fn($a, $b) => strcmp($a['date'] ?? '', $b['date'] ?? ''));
+$nextCourse = next_course($infos);
+$alertOn = settings('alert_enabled') && trim((string) settings('alert_text')) !== '';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -513,11 +522,41 @@ header.scrolled .menu a.active{color:var(--vermillion)}
   a[href^="http"]::after{content:" (" attr(href) ")";font-size:9pt;color:#555!important}
   .map-row iframe{display:none}
 }
-</style>
+/* ---------- alert bar ---------- */
+.alertbar{position:fixed;top:0;left:0;right:0;z-index:70;background:var(--vermillion);color:#fff;text-align:center;padding:11px 16px;font-weight:600;font-size:.92rem}
+body.has-alert header{top:42px}
+@media(max-width:640px){.alertbar{font-size:.82rem;padding:9px 12px}}
+
+/* ---------- stages ---------- */
+.stages-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;margin-top:44px}
+.stage-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.3s;display:flex;flex-direction:column}
+.stage-card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+.stage-card .ph{height:200px;background:var(--paper-3);overflow:hidden}
+.stage-card .ph img{width:100%;height:100%;object-fit:cover}
+.stage-card .body{padding:22px 24px}
+.stage-card .d{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vermillion);font-weight:700}
+.stage-card h3{font-size:1.4rem;margin:6px 0 6px}
+.stage-card p{margin:0;color:var(--muted);font-size:.92rem}
+.stages-empty{margin-top:40px;text-align:center;color:var(--muted);max-width:60ch;margin-left:auto;margin-right:auto}
+
+/* ---------- facebook ---------- */
+.fb-wrap{display:flex;justify-content:center;margin-top:40px}
+.fb-wrap iframe{border:0;overflow:hidden;border-radius:var(--radius);box-shadow:var(--shadow);max-width:100%}
+
+/* ---------- light form (essai) ---------- */
+.form-light{display:grid;gap:16px}
+.form-light label{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:-8px;font-weight:600}
+.form-light input,.form-light textarea{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.form-light input:focus,.form-light textarea:focus{border-color:var(--vermillion);background:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+</style><?php if (config('analytics')) echo "\n" . config('analytics') . "\n"; ?>
+<?php if (turnstile_enabled()): ?><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script><?php endif; ?>
 </head>
-<body class="no-js">
+<body class="no-js<?php echo $alertOn ? ' has-alert' : ''; ?>">
 <script>document.body.classList.remove('no-js');</script>
 <a href="#main" class="skip">Aller au contenu</a>
+<?php if ($alertOn): ?><div class="alertbar" role="alert"><?php echo e(settings('alert_text')); ?></div><?php endif; ?>
 
 <header id="head">
   <div class="nav">
@@ -532,7 +571,7 @@ header.scrolled .menu a.active{color:var(--vermillion)}
       <a href="#galerie">Galerie</a>
       <a href="#histoire">Histoire</a>
       <a href="#glossaire">Glossaire</a>
-      <a href="#contact" class="cta">Cours d'essai gratuit</a>
+      <a href="#essai" class="cta">Cours d'essai gratuit</a>
     </nav>
     <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
   </div>
@@ -548,8 +587,9 @@ header.scrolled .menu a.active{color:var(--vermillion)}
     <h1>L'art de<br>l'harmonie<em>.</em></h1>
     <p class="sub">Depuis 1987, le Musubi Dojo enseigne à Jurbise un aïkido authentique : un art martial sans compétition, ouvert à toutes et tous, pour cultiver la maîtrise de soi, la souplesse du corps et de l'esprit.</p>
     <p class="place">Académie Provinciale de Police · Route d'Ath 25-35, 7050 Jurbise</p>
+    <?php if ($nextCourse): ?><p class="place" style="color:var(--gold);margin-top:4px">Prochain cours : <?php echo e($nextCourse); ?></p><?php endif; ?>
     <div class="hero-cta">
-      <a href="#contact" class="btn btn-primary">Réserver 2 cours d'essai gratuits</a>
+      <a href="#essai" class="btn btn-primary">Réserver 2 cours d'essai gratuits</a>
       <a href="#aikido" class="btn btn-ghost">Découvrir l'aïkido</a>
     </div>
   </div>
@@ -572,12 +612,11 @@ header.scrolled .menu a.active{color:var(--vermillion)}
     <div class="reveal">
       <p class="eyebrow">Qu'est-ce que l'Aïkido</p>
       <h2 class="h-sec">Un art martial<br>adapté au monde moderne</h2>
-      <p class="lead">Créé par O'Senseï Morihei Ueshiba, l'aïkido est la synthèse des arts martiaux japonais. Ses techniques, essentiellement défensives, permettent de répondre à toute agression sans jamais chercher à détruire ni humilier l'adversaire. Une véritable école de non-violence.</p>
+      <p class="lead"><?php echo e($aikido['lead'] ?? ''); ?></p>
       <div class="values">
-        <div class="value"><b>Sans compétition</b><p>Pour les dames comme pour les hommes, sans limite d'âge.</p></div>
-        <div class="value"><b>Défense &amp; dissuasion</b><p>Neutraliser l'intention agressive, en préservant l'intégrité.</p></div>
-        <div class="value"><b>Maîtrise de soi</b><p>Contrôle des émotions, une excellente thérapie anti-stress.</p></div>
-        <div class="value"><b>Corps &amp; esprit</b><p>Développer la souplesse et l'harmonie intérieure.</p></div>
+        <?php foreach (($aikido['values'] ?? []) as $v): ?>
+        <div class="value"><b><?php echo e($v['title'] ?? ''); ?></b><p><?php echo e($v['text'] ?? ''); ?></p></div>
+        <?php endforeach; ?>
       </div>
     </div>
     <div class="reveal">
@@ -708,12 +747,9 @@ header.scrolled .menu a.active{color:var(--vermillion)}
       <h2 class="h-sec" style="color:var(--paper)">Bientôt quatre décennies<br>sur le tatami</h2>
     </div>
     <div class="tl">
-      <div class="tl-item reveal"><div class="yr">1987</div><p><b>Naissance du Musubi Dojo</b> dans les locaux de l'Académie de Police de Jurbise, fondé par Jean Swaelens et Anne Danloy, tous deux formés par les maîtres japonais Sugano et Tamura Shihan.</p></div>
-      <div class="tl-item reveal"><div class="yr">1989</div><p>Le dojo accueille un <b>stage fédéral dirigé par Tamura Shihan</b>, 8ᵉ dan, rassemblant une centaine d'aïkidoka de Belgique et d'ailleurs.</p></div>
-      <div class="tl-item reveal"><div class="yr">1996</div><p>Maître Jean De Dobbeleer, 6ᵉ dan et plus haut gradé de l'AFA, rejoint le club comme <b>directeur technique</b>.</p></div>
-      <div class="tl-item reveal"><div class="yr">2002</div><p>Benoît Toulotte devient <b>professeur adjoint</b> du Musubi Dojo, aux côtés de Jean Swaelens.</p></div>
-      <div class="tl-item reveal"><div class="yr">2018</div><p>Ouverture d'une <b>section enfants</b> à l'initiative de Benoît Toulotte et Frédéric Buchon.</p></div>
-      <div class="tl-item reveal"><div class="yr">2020</div><p>Jean Swaelens transmet sa charge de <b>Dojo Cho à Benoît Toulotte</b>, perpétuant l'esprit du dojo.</p></div>
+      <?php foreach ($histoire as $h): ?>
+      <div class="tl-item reveal"><div class="yr"><?php echo e($h['year'] ?? ''); ?></div><p><?php echo rich($h['text'] ?? ''); ?></p></div>
+      <?php endforeach; ?>
     </div>
     <div class="musubi-quote reveal">
       <span class="mk jp" aria-hidden="true">結</span>
@@ -780,6 +816,43 @@ header.scrolled .menu a.active{color:var(--vermillion)}
   </div>
 </section>
 
+<!-- ===================== AGENDA STAGES ===================== -->
+<section class="section" id="agenda">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center">
+      <p class="eyebrow" style="justify-content:center">Agenda</p>
+      <h2 class="h-sec">Prochains stages</h2>
+      <p class="lead" style="margin:0 auto">Les stages de l'Association Francophone d'Aïkido suivis par nos pratiquants.</p>
+    </div>
+    <?php if ($stages): ?>
+    <div class="stages-list">
+      <?php foreach ($stages as $s): $sts = strtotime($s['date'] ?? ''); ?>
+      <article class="stage-card reveal">
+        <?php if (!empty($s['image'])): ?><div class="ph"><?php echo picture($s['image'], $s['webp'] ?? '', $s['title'] ?? '', 'loading="lazy"'); ?></div><?php endif; ?>
+        <div class="body">
+          <p class="d"><?php echo $sts ? e(fmt_date_fr($sts)) : e($s['date'] ?? ''); ?></p>
+          <h3><?php echo e($s['title'] ?? ''); ?></h3>
+          <p><?php echo e(trim(($s['teacher'] ?? '') . (!empty($s['grade']) ? ', ' . $s['grade'] : ''))); if (!empty($s['place'])) echo ' · ' . e($s['place']); ?></p>
+          <?php if (!empty($s['link'])): ?><a href="<?php echo e($s['link']); ?>" target="_blank" rel="noopener" class="btn btn-dark" style="margin-top:14px">En savoir plus</a><?php endif; ?>
+        </div>
+      </article>
+      <?php endforeach; ?>
+    </div>
+    <?php
+      $events = array_map(function ($s) {
+          return ['@context' => 'https://schema.org', '@type' => 'Event', 'name' => $s['title'] ?? '', 'startDate' => $s['date'] ?? '',
+                  'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+                  'location' => ['@type' => 'Place', 'name' => $s['place'] ?? 'Belgique'],
+                  'organizer' => ['@type' => 'Organization', 'name' => "Association Francophone d'Aïkido"]];
+      }, $stages);
+      echo '<script type="application/ld+json">' . json_encode(count($events) === 1 ? $events[0] : $events, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
+    ?>
+    <?php else: ?>
+    <p class="stages-empty reveal">Aucun stage n'est programmé pour l'instant. Retrouvez l'agenda complet des stages fédéraux sur <a href="https://www.aikido.be" target="_blank" rel="noopener" style="color:var(--vermillion);font-weight:600">aikido.be</a>.</p>
+    <?php endif; ?>
+  </div>
+</section>
+
 <!-- ===================== NEWS / MEMORIAM ===================== -->
 <section class="section news" id="actualites">
   <div class="wrap">
@@ -806,15 +879,19 @@ header.scrolled .menu a.active{color:var(--vermillion)}
         <?php endforeach; ?>
       </div>
       <div class="memoriam reveal">
-        <picture><source srcset="images/Jean.webp" type="image/webp"><img class="mimg" src="images/Jean.png" alt="Jean Swaelens, fondateur du Musubi Dojo" width="120" height="120"/></picture>
+        <?php $mf = $memoriam['founder'] ?? []; ?>
+        <?php echo picture($mf['photo'] ?? '', $mf['webp'] ?? '', $mf['name'] ?? '', 'class="mimg" width="120" height="120"'); ?>
         <p class="lbl">In Memoriam</p>
-        <h3>Jean Swaelens</h3>
-        <p class="yrs">Fondateur du Musubi Dojo · 5ᵉ dan Aïkikaï, Shidoin</p>
-        <p>Jean a créé le Musubi Dojo, nous a appris l'aïkido et nous en a transmis la passion. Nous lui en serons à jamais reconnaissants.</p>
+        <h3><?php echo e($mf['name'] ?? ''); ?></h3>
+        <p class="yrs"><?php echo e($mf['subtitle'] ?? ''); ?></p>
+        <p><?php echo e($mf['text'] ?? ''); ?></p>
+        <?php if (!empty($memoriam['masters'])): ?>
         <div class="mem-masters">
-          <figure><picture><source srcset="images/sugano.webp" type="image/webp"><img src="images/sugano.jpg" alt="Sugano Shihan" loading="lazy" width="74" height="74"></picture><figcaption><b>Sugano Shihan</b>1939-2010</figcaption></figure>
-          <figure><picture><source srcset="images/tamura.webp" type="image/webp"><img src="images/tamura.jpg" alt="Tamura Shihan" loading="lazy" width="74" height="74"></picture><figcaption><b>Tamura Shihan</b>1933-2010</figcaption></figure>
+          <?php foreach ($memoriam['masters'] as $ms): ?>
+          <figure><?php echo picture($ms['photo'] ?? '', $ms['webp'] ?? '', $ms['name'] ?? '', 'loading="lazy" width="74" height="74"'); ?><figcaption><b><?php echo e($ms['name'] ?? ''); ?></b><?php echo e($ms['years'] ?? ''); ?></figcaption></figure>
+          <?php endforeach; ?>
         </div>
+        <?php endif; ?>
       </div>
     </div>
   </div>
@@ -864,16 +941,59 @@ header.scrolled .menu a.active{color:var(--vermillion)}
       <h2 class="h-sec">Questions fréquentes</h2>
     </div>
     <div class="faq">
-      <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Faut-il être sportif ou souple pour commencer ?</button><div class="faq-a"><p>Non, absolument pas. L'aïkido se pratique à tout âge et à tout niveau de condition physique. La souplesse et l'aisance viennent naturellement avec la pratique régulière.</p></div></div>
-      <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Puis-je essayer avant de m'inscrire ?</button><div class="faq-a"><p>Oui. Les deux premiers cours sont entièrement gratuits et sans engagement. Venez simplement pousser la porte du dojo.</p></div></div>
-      <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Que dois-je apporter au premier cours ?</button><div class="faq-a"><p>Un simple training et une bouteille d'eau suffisent pour l'essai. Par la suite, une tenue de judo (judogi) et des sandales (zori) seront nécessaires.</p></div></div>
-      <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">À partir de quel âge peut-on pratiquer ?</button><div class="faq-a"><p>Le cours enfants est accessible dès 6 ans, le dimanche matin. Le cours adultes accueille les pratiquants à partir de 14 ans.</p></div></div>
-      <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">L'aïkido est-il dangereux ou violent ?</button><div class="faq-a"><p>Non. C'est un art martial défensif, sans compétition, animé par un esprit de non-violence. Les techniques neutralisent l'agression tout en respectant l'intégrité du partenaire.</p></div></div>
-      <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Combien coûte la pratique ?</button><div class="faq-a"><p>La cotisation est de 25 € par mois pour les adultes et 20 € par mois pour les étudiants (14 ans et plus), à laquelle s'ajoute l'assurance-licence fédérale de 35 € par an.</p></div></div>
-      <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">Faut-il un certificat médical ?</button><div class="faq-a"><p>Oui, un certificat médical récent attestant de votre aptitude à la pratique est demandé pour vous inscrire.</p></div></div>
+      <?php foreach ($faq as $qa): ?>
+      <div class="faq-item reveal"><button class="faq-q" aria-expanded="false"><?php echo e($qa['q'] ?? ''); ?></button><div class="faq-a"><p><?php echo rich($qa['a'] ?? ''); ?></p></div></div>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
+
+<!-- ===================== ESSAI ===================== -->
+<section class="section dojo waves" id="essai">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center">
+      <p class="eyebrow" style="justify-content:center">Cours d'essai gratuit</p>
+      <h2 class="h-sec">Réservez votre essai</h2>
+      <p class="lead" style="margin:0 auto">Deux cours offerts, sans engagement. Laissez-nous vos coordonnées, nous vous recontactons rapidement.</p>
+    </div>
+    <?php if (($_GET['err'] ?? '') === '1'): ?>
+    <p class="reveal" style="max-width:640px;margin:20px auto 0;color:var(--vermillion);background:#fff;border:1px solid var(--line);padding:12px 16px;border-radius:12px">Le formulaire était incomplet ou invalide. Merci de réessayer.</p>
+    <?php endif; ?>
+    <form class="reveal form-light" action="contact.php" method="POST" style="max-width:640px;margin:34px auto 0">
+      <input type="hidden" name="type" value="essai"/>
+      <input type="hidden" name="ftok" value="<?php echo e(form_token()); ?>"/>
+      <input type="text" name="website" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true"/>
+      <div class="grid2">
+        <div><label for="e_nom">Nom</label><input id="e_nom" name="nom" type="text" placeholder="Votre nom" required></div>
+        <div><label for="e_mail">E-mail</label><input id="e_mail" name="email" type="email" placeholder="vous@exemple.be" required></div>
+      </div>
+      <div class="grid2">
+        <div><label for="e_tel">Téléphone</label><input id="e_tel" name="phone" type="tel" placeholder="Facultatif"></div>
+        <div><label for="e_age">Âge</label><input id="e_age" name="age" type="text" placeholder="Adulte, enfant, 12 ans..."></div>
+      </div>
+      <div><label for="e_when">Quand aimeriez-vous venir ?</label><input id="e_when" name="wanted" type="text" placeholder="Ex. un dimanche matin"></div>
+      <div><label for="e_msg">Message (facultatif)</label><textarea id="e_msg" name="message" rows="3" placeholder="Une question ?"></textarea></div>
+      <?php echo turnstile_widget(); ?>
+      <button type="submit" class="btn btn-primary" style="justify-content:center">Réserver mon cours d'essai</button>
+    </form>
+  </div>
+</section>
+
+<!-- ===================== FACEBOOK ===================== -->
+<?php $fb = settings('facebook_url'); if ($fb): ?>
+<section class="section" id="facebook-feed">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center">
+      <p class="eyebrow" style="justify-content:center">Communauté</p>
+      <h2 class="h-sec">Suivez-nous sur Facebook</h2>
+      <p class="lead" style="margin:0 auto">Actualités, photos et vie du club au quotidien.</p>
+    </div>
+    <div class="fb-wrap reveal">
+      <iframe title="Page Facebook du Musubi Dojo" src="https://www.facebook.com/plugins/page.php?href=<?php echo urlencode($fb); ?>&tabs=timeline&width=500&height=560&smallheader=false&adaptcontainerwidth=true&hidecover=false&showfacepile=true" width="500" height="560" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
 
 <!-- ===================== CONTACT ===================== -->
 <section class="section contact" id="contact">
@@ -912,6 +1032,8 @@ header.scrolled .menu a.active{color:var(--vermillion)}
       <p class="reveal" style="color:#ffcabf;background:rgba(195,48,37,.15);border:1px solid rgba(195,48,37,.4);padding:12px 16px;border-radius:12px">Une erreur est survenue ou le formulaire était incomplet. Merci de réessayer.</p>
       <?php endif; ?>
       <form class="reveal" action="contact.php" method="POST">
+        <input type="hidden" name="type" value="contact"/>
+        <input type="hidden" name="ftok" value="<?php echo e(form_token()); ?>"/>
         <input type="text" name="website" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true"/>
         <label for="nom">Nom</label>
         <input id="nom" name="nom" type="text" placeholder="Votre nom" required/>
@@ -919,6 +1041,7 @@ header.scrolled .menu a.active{color:var(--vermillion)}
         <input id="mail" name="email" type="email" placeholder="vous@exemple.be" required/>
         <label for="msg">Message</label>
         <textarea id="msg" name="message" placeholder="Je souhaite venir essayer un cours..." required></textarea>
+        <?php echo turnstile_widget(); ?>
         <button type="submit" class="btn btn-primary" style="justify-content:center">Envoyer ma demande</button>
       </form>
     </div>
@@ -971,6 +1094,8 @@ header.scrolled .menu a.active{color:var(--vermillion)}
   </div>
   <div class="foot-bottom">
     © <span id="yr"></span> École d'Aïkido Musubi Dojo · Jurbise · Tous droits réservés ·
+    <a href="mentions-legales.php">Mentions légales</a> ·
+    <a href="confidentialite.php">Confidentialité</a> ·
     <a href="#accueil">Retour en haut</a>
   </div>
 </footer>
@@ -978,7 +1103,7 @@ header.scrolled .menu a.active{color:var(--vermillion)}
 <button class="top" id="top" aria-label="Haut de page">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="m6 15 6-6 6 6"/></svg>
 </button>
-<a class="mobile-cta" id="mcta" href="#contact">
+<a class="mobile-cta" id="mcta" href="#essai">
   <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/></svg>
   Essai gratuit
 </a>

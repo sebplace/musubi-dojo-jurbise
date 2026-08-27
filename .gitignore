@@ -5,3 +5,6 @@ Thumbs.db
 
 production/inc/config.php
 production/inc/_contact-dev.log
+
+production/data/auth.json
+production/data/messages.json

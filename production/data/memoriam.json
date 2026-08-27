@@ -1,0 +1,13 @@
+{
+  "founder": {
+    "name": "Jean Swaelens",
+    "subtitle": "Fondateur du Musubi Dojo · 5ᵉ dan Aïkikaï, Shidoin",
+    "text": "Jean a créé le Musubi Dojo, nous a appris l'aïkido et nous en a transmis la passion. Nous lui en serons à jamais reconnaissants.",
+    "photo": "images/Jean.png",
+    "webp": "images/Jean.webp"
+  },
+  "masters": [
+    { "name": "Sugano Shihan", "years": "1939-2010", "photo": "images/sugano.jpg", "webp": "images/sugano.webp" },
+    { "name": "Tamura Shihan", "years": "1933-2010", "photo": "images/tamura.jpg", "webp": "images/tamura.webp" }
+  ]
+}

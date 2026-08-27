@@ -14,15 +14,31 @@ function is_logged_in() {
     return !empty($_SESSION['admin_ok']);
 }
 
+/** Hash du mot de passe courant : data/auth.json prioritaire, sinon config. */
+function admin_hash() {
+    $auth = load_json('auth.json', []);
+    if (!empty($auth['pass_hash'])) return (string) $auth['pass_hash'];
+    return (string) config('admin_pass_hash', '');
+}
+
 function attempt_login($user, $pass) {
     $u = (string) config('admin_user', 'admin');
-    $h = (string) config('admin_pass_hash', '');
+    $h = admin_hash();
     if ($h !== '' && hash_equals($u, (string) $user) && password_verify((string) $pass, $h)) {
         session_regenerate_id(true);
         $_SESSION['admin_ok'] = true;
         return true;
     }
     return false;
+}
+
+/** Change le mot de passe (écrit data/auth.json). Renvoie null si OK, sinon un message. */
+function change_password($current, $new, $confirm) {
+    if (!password_verify((string) $current, admin_hash())) return 'Mot de passe actuel incorrect.';
+    if (strlen($new) < 6)     return 'Le nouveau mot de passe doit contenir au moins 6 caractères.';
+    if ($new !== $confirm)    return 'La confirmation ne correspond pas.';
+    $ok = save_json('auth.json', ['pass_hash' => password_hash((string) $new, PASSWORD_DEFAULT)]);
+    return $ok ? null : "Impossible d'enregistrer le nouveau mot de passe (droits d'écriture ?).";
 }
 
 function require_login() {
@@ -67,46 +83,54 @@ function take_flashes() {
 }
 
 /* --------------------------------------------------------------- Upload */
-/** Traite un champ fichier image. Renvoie [chemin_relatif|null, erreur|null]. */
+/** Traite un champ fichier image. Renvoie [chemin|null, webp|null, erreur|null]. */
 function upload_image($field, $prefix) {
     if (empty($_FILES[$field]) || ($_FILES[$field]['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-        return [null, null]; // aucun fichier envoyé (facultatif)
+        return [null, null, null]; // aucun fichier envoyé (facultatif)
     }
     $f = $_FILES[$field];
-    if ($f['error'] !== UPLOAD_ERR_OK)          return [null, "Erreur lors de l'envoi du fichier."];
-    if ($f['size'] > 8 * 1024 * 1024)           return [null, "Fichier trop lourd (maximum 8 Mo)."];
+    if ($f['error'] !== UPLOAD_ERR_OK)          return [null, null, "Erreur lors de l'envoi du fichier."];
+    if ($f['size'] > 8 * 1024 * 1024)           return [null, null, "Fichier trop lourd (maximum 8 Mo)."];
     $info = @getimagesize($f['tmp_name']);
-    if (!$info)                                 return [null, "Le fichier n'est pas une image valide."];
+    if (!$info)                                 return [null, null, "Le fichier n'est pas une image valide."];
     $map = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif'];
     $mime = $info['mime'] ?? '';
-    if (!isset($map[$mime]))                    return [null, "Format non supporté (JPEG, PNG, WebP ou GIF)."];
+    if (!isset($map[$mime]))                    return [null, null, "Format non supporté (JPEG, PNG, WebP ou GIF)."];
     $ext  = $map[$mime];
-    $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($prefix)) ?: 'photo';
-    $name = trim($slug, '-') . '-' . date('Ymd') . '-' . bin2hex(random_bytes(4)) . '.' . $ext;
+    $slug = trim(preg_replace('/[^a-z0-9]+/', '-', strtolower($prefix)), '-') ?: 'photo';
+    $name = $slug . '-' . date('Ymd') . '-' . bin2hex(random_bytes(4)) . '.' . $ext;
     $dest = IMG_DIR . '/' . $name;
     if (!move_uploaded_file($f['tmp_name'], $dest)) {
-        return [null, "Impossible d'enregistrer l'image sur le serveur."];
+        return [null, null, "Impossible d'enregistrer l'image sur le serveur."];
     }
-    return ['images/' . $name, null];
+    $webp = optimize_image($dest); // redimensionne + crée un .webp
+    return ['images/' . $name, $webp, null];
 }
 
 /* --------------------------------------------------------------- Layout */
 function admin_header($title, $active = '') {
     $nav = [
         ''            => 'Tableau de bord',
+        'messages'    => 'Messages',
         'actualites'  => 'Actualités',
+        'stages'      => 'Stages',
         'galerie'     => 'Galerie',
         'professeurs' => 'Professeurs',
+        'textes'      => 'Textes',
         'infos'       => 'Infos pratiques',
+        'reglages'    => 'Réglages',
     ];
+    $unread = 0;
+    foreach (load_json('messages.json', []) as $m) if (empty($m['read'])) $unread++;
     echo '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">';
     echo '<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">';
     echo '<title>' . e($title) . ' · Admin Musubi Dojo</title><link rel="stylesheet" href="style.css"></head><body>';
     echo '<header class="a-head"><div class="a-brand"><span class="dot"></span> Musubi Dojo <small>Administration</small></div>';
     echo '<nav class="a-nav">';
     foreach ($nav as $p => $label) {
-        $cls = ($active === $p) ? ' class="on"' : '';
-        echo '<a href="index.php' . ($p ? '?p=' . $p : '') . '"' . $cls . '>' . e($label) . '</a>';
+        $cls   = ($active === $p) ? ' class="on"' : '';
+        $badge = ($p === 'messages' && $unread) ? ' <span class="badge">' . $unread . '</span>' : '';
+        echo '<a href="index.php' . ($p ? '?p=' . $p : '') . '"' . $cls . '>' . e($label) . $badge . '</a>';
     }
     echo '<a href="../index.php" target="_blank" class="ext">Voir le site ↗</a>';
     echo '<a href="index.php?action=logout" class="out">Déconnexion</a>';
