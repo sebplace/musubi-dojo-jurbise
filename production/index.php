@@ -686,7 +686,7 @@ html.theme-or{
       <a href="#galerie">Galerie</a>
       <a href="#histoire">Histoire</a>
       <a href="#glossaire">Glossaire</a>
-      <a href="#essai" class="cta">Cours d'essai gratuit</a>
+      <a href="#contact" class="cta">Cours d'essai gratuit</a>
     </nav>
     <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
   </div>
@@ -704,7 +704,7 @@ html.theme-or{
     <p class="place">Académie Provinciale de Police · Route d'Ath 25-35, 7050 Jurbise</p>
     <?php if ($nextCourse): ?><p class="place" style="color:var(--gold);margin-top:4px">Prochain cours : <?php echo e($nextCourse); ?></p><?php endif; ?>
     <div class="hero-cta">
-      <a href="#essai" class="btn btn-primary">Réserver 2 cours d'essai gratuits</a>
+      <a href="#contact" class="btn btn-primary">Réserver 2 cours d'essai gratuits</a>
       <a href="#aikido" class="btn btn-ghost">Découvrir l'aïkido</a>
     </div>
   </div>
@@ -1072,37 +1072,6 @@ html.theme-or{
   </div>
 </section>
 
-<!-- ===================== ESSAI ===================== -->
-<section class="section dojo waves" id="essai">
-  <div class="wrap">
-    <div class="reveal" style="text-align:center">
-      <p class="eyebrow" style="justify-content:center">Cours d'essai gratuit</p>
-      <h2 class="h-sec">Réservez votre essai</h2>
-      <p class="lead" style="margin:0 auto">Deux cours offerts, sans engagement. Laissez-nous vos coordonnées, nous vous recontactons rapidement.</p>
-    </div>
-    <?php if (($_GET['err'] ?? '') === '1'): ?>
-    <p class="reveal" style="max-width:640px;margin:20px auto 0;color:var(--vermillion);background:#fff;border:1px solid var(--line);padding:12px 16px;border-radius:12px">Le formulaire était incomplet ou invalide. Merci de réessayer.</p>
-    <?php endif; ?>
-    <form class="reveal form-light" action="contact.php" method="POST" style="max-width:640px;margin:34px auto 0">
-      <input type="hidden" name="type" value="essai"/>
-      <input type="hidden" name="ftok" value="<?php echo e(form_token()); ?>"/>
-      <input type="text" name="website" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true"/>
-      <div class="grid2">
-        <div><label for="e_nom">Nom</label><input id="e_nom" name="nom" type="text" placeholder="Votre nom" required></div>
-        <div><label for="e_mail">E-mail</label><input id="e_mail" name="email" type="email" placeholder="vous@exemple.be" required></div>
-      </div>
-      <div class="grid2">
-        <div><label for="e_tel">Téléphone</label><input id="e_tel" name="phone" type="tel" placeholder="Facultatif"></div>
-        <div><label for="e_age">Âge</label><input id="e_age" name="age" type="text" placeholder="Adulte, enfant, 12 ans..."></div>
-      </div>
-      <div><label for="e_when">Quand aimeriez-vous venir ?</label><input id="e_when" name="wanted" type="text" placeholder="Ex. un dimanche matin"></div>
-      <div><label for="e_msg">Message (facultatif)</label><textarea id="e_msg" name="message" rows="3" placeholder="Une question ?"></textarea></div>
-      <?php echo turnstile_widget(); ?>
-      <button type="submit" class="btn btn-primary" style="justify-content:center">Réserver mon cours d'essai</button>
-    </form>
-  </div>
-</section>
-
 <!-- ===================== FACEBOOK ===================== -->
 <?php $fb = settings('facebook_url'); if ($fb): ?>
 <section class="section" id="facebook-feed">
@@ -1229,7 +1198,7 @@ html.theme-or{
 <button class="top" id="top" aria-label="Haut de page">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="m6 15 6-6 6 6"/></svg>
 </button>
-<a class="mobile-cta" id="mcta" href="#essai">
+<a class="mobile-cta" id="mcta" href="#contact">
   <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/></svg>
   Essai gratuit
 </a>
