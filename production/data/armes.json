@@ -1,0 +1,16 @@
+{
+  "grades_intro": "En aïkido traditionnel, la progression se fait par grades kyu (élève), puis dan (ceinture noire), passés devant la Commission Fédérale des Grades de l'AFA et validés par le Hombu Dojo, l'Aïkikaï de Tokyo.",
+  "belts": [
+    {"label":"Débutant","sub":"Premiers pas sur le tatami","bar":"#f2ede1"},
+    {"label":"6ᵉ à 4ᵉ kyu","sub":"Élève","bar":"#e7dcc6"},
+    {"label":"3ᵉ à 1ᵉʳ kyu","sub":"Élève avancé","bar":"#c9b892"},
+    {"label":"Shodan","sub":"1ᵉʳ dan, ceinture noire","bar":"#17130d"},
+    {"label":"Yudansha","sub":"Dan supérieurs","bar":"linear-gradient(90deg,#17130d,#b08d57)"}
+  ],
+  "armes_intro": "L'aïkido s'étudie à mains nues, mais aussi avec les armes traditionnelles, qui affinent les déplacements, la distance et la précision.",
+  "armes": [
+    {"kanji":"木剣","nom":"Bokken","desc":"Sabre en bois. Il transmet les principes du sabre japonais (ken) : posture, coupe et intention."},
+    {"kanji":"杖","nom":"Jo","desc":"Bâton d'environ 1,28 m. Il développe les déplacements, les frappes et la fluidité du corps."},
+    {"kanji":"短刀","nom":"Tanto","desc":"Couteau (en bois à l'entraînement). Il sert à étudier les défenses face à une attaque armée."}
+  ]
+}

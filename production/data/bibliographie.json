@@ -1,0 +1,23 @@
+[
+  {"cat":"fr","img":"budo_moriheiueshiba.jpg","t":"Budo","a":"Morihei Ueshiba","e":"Budostore, Paris"},
+  {"cat":"fr","img":"lapratiquedelaikido_kisshomaru.jpg","t":"La Pratique de l'Aïkido","a":"Kisshomaru Ueshiba","e":"Budo Éditions"},
+  {"cat":"fr","img":"MethNat_tamura.jpg","t":"Aïkido, Méthode nationale","a":"Nobuyoshi Tamura","e":"Univerpress (épuisé)"},
+  {"cat":"fr","img":"tamura_etiquettetransmission.jpg","t":"Aïkido, Étiquette et Transmission","a":"Nobuyoshi Tamura","e":"Soleil Levant"},
+  {"cat":"fr","img":"aikido_tamura.jpg","t":"Aïkido","a":"Nobuyoshi Tamura","e":"AGEP, Marseille"},
+  {"cat":"fr","img":"aikido_natureharmonie.jpg","t":"Aïkido, Nature et Harmonie","a":"Mitsugi Saotome","e":"SEDIREP"},
+  {"cat":"fr","img":"tissier_aikidofondamental_culture.jpg","t":"Aïkido, Culture et Traditions","a":"Christian Tissier","e":"SEDIREP"},
+  {"cat":"fr","img":"tissier_aikidofondamental.jpg","t":"Aïkido fondamental","a":"Christian Tissier","e":"SEDIREP"},
+  {"cat":"fr","img":"tissier_aikidofondamental_tome3_baton.jpg","t":"Aïkido fondamental, Techniques de bâton (T.3)","a":"Christian Tissier","e":"SEDIREP"},
+  {"cat":"fr","img":"tissier_aikidofondamental_tome4.jpg","t":"Aïkido fondamental, Techniques avancées (T.4)","a":"Christian Tissier","e":"SEDIREP"},
+  {"cat":"fr","img":"shobuaiki_grand.jpg","t":"Shobu Aiki","a":"J.D. Cauhépé et A. Kuang","e":"Laballery"},
+  {"cat":"fr","img":"au_dela_de_l_adressivite.jpg","t":"Aïkido, Au-delà de l'agressivité","a":"Massimo N. Di Villadorata","e":"Les Éditions de l'Homme"},
+  {"cat":"fr","img":"traitedidactique_aikidotraditionnel.jpg","t":"Traité didactique d'aïkido traditionnel","a":"Alain Peyrache","e":"ARG, Chalon-sur-Saône"},
+  {"cat":"en","img":"the_spirit_of_aikido_kisshomaru.jpg","t":"The Spirit of Aikido","a":"Kisshomaru Ueshiba","e":"Kodansha"},
+  {"cat":"en","img":"this_is_aikido_KoichiTohei.jpg","t":"This is Aikido","a":"Koichi Tohei","e":"Japan Publications"},
+  {"cat":"en","img":"aikidodynamicsphere.jpg","t":"Aikido and the Dynamic Sphere","a":"Westbrook et Ratti","e":"Tuttle"},
+  {"cat":"en","img":"","t":"The Kiuten-irimi-tenkan-jutsu of Aïkido","a":"Paul C.N. Lee","e":""},
+  {"cat":"autres","img":"","t":"IAI, L'Art du Sabre japonais","a":"Malcom Tiki Shewan","e":"Cannes Azur"},
+  {"cat":"autres","img":"pratique_de_l_escrime_japonaise.jpg","t":"Pratique de l'Escrime japonaise","a":"Serge Degore","e":"Chiron"},
+  {"cat":"autres","img":"le_tanto_et_sa_technique.jpg","t":"Le tanto et sa technique","a":"Gérard Lecoeur","e":"Judogi"},
+  {"cat":"autres","img":"","t":"Le Livre des 5 Anneaux","a":"Miyamoto Musashi","e":"Belfond"}
+]

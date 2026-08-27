@@ -13,6 +13,13 @@ $stagesAll = load_json('stages.json', []);
 $stages    = array_values(array_filter($stagesAll, fn($s) => ($s['date'] ?? '') >= date('Y-m-d')));
 usort($stages, fn($a, $b) => strcmp($a['date'] ?? '', $b['date'] ?? ''));
 $nextCourse = next_course($infos);
+$glossaire = load_json('glossaire.json', []);
+$biblio    = load_json('bibliographie.json', []);
+$contact   = load_json('contact.json', []);
+$techniques= load_json('techniques.json', []);
+$armes     = load_json('armes.json', []);
+$liens     = load_json('liens.json', []);
+$lib       = load_json('libelles.json', []);
 $alertOn = settings('alert_enabled') && trim((string) settings('alert_text')) !== '';
 ?>
 <!DOCTYPE html>
@@ -583,9 +590,9 @@ body.has-alert header{top:42px}
   <div class="hero-waves"></div>
   <div class="hero-kanji jp" aria-hidden="true">結</div>
   <div class="hero-inner">
-    <p class="tag">École d'Aïkido Traditionnel · Aïkikaï</p>
-    <h1>L'art de<br>l'harmonie<em>.</em></h1>
-    <p class="sub">Depuis 1987, le Musubi Dojo enseigne à Jurbise un aïkido authentique : un art martial sans compétition, ouvert à toutes et tous, pour cultiver la maîtrise de soi, la souplesse du corps et de l'esprit.</p>
+    <p class="tag"><?php echo e($lib['hero_eyebrow'] ?? "École d'Aïkido Traditionnel · Aïkikaï"); ?></p>
+    <h1><?php echo ($lib['hero_title'] ?? "L'art de<br>l'harmonie"); ?><em>.</em></h1>
+    <p class="sub"><?php echo e($lib['hero_subtitle'] ?? ''); ?></p>
     <p class="place">Académie Provinciale de Police · Route d'Ath 25-35, 7050 Jurbise</p>
     <?php if ($nextCourse): ?><p class="place" style="color:var(--gold);margin-top:4px">Prochain cours : <?php echo e($nextCourse); ?></p><?php endif; ?>
     <div class="hero-cta">
@@ -717,7 +724,7 @@ body.has-alert header{top:42px}
       </div>
       <?php endforeach; ?>
     </div>
-    <p class="lead reveal" style="margin:30px auto 0;text-align:center">Directeur technique : <b style="color:var(--ink)">Louis Van Thieghem Shihan</b>, 7ᵉ dan Aïkikaï, membre de la Commission Fédérale des Grades de l'AFA.</p>
+    <p class="lead reveal" style="margin:30px auto 0;text-align:center"><?php echo e($lib['director'] ?? ''); ?></p>
   </div>
 </section>
 
@@ -772,18 +779,9 @@ body.has-alert header{top:42px}
       <p class="lead" style="margin:0 auto">Un aperçu des techniques travaillées : mains nues, tanto (couteau), ken (sabre) et jo (bâton).</p>
     </div>
     <div class="vid-grid">
-      <div class="vid reveal"><span class="n">01</span><div><b>Shihonage</b><span>sur shomenuchi</span></div></div>
-      <div class="vid reveal"><span class="n">02</span><div><b>Kokyunage</b><span>sur ushiro katadori</span></div></div>
-      <div class="vid reveal"><span class="n">03</span><div><b>Koshinage</b><span>sur yokomenuchi</span></div></div>
-      <div class="vid reveal"><span class="n">04</span><div><b>Kotegaeshi</b><span>sur chudan tsuki</span></div></div>
-      <div class="vid reveal"><span class="n">05</span><div><b>Kotegaeshi + tanto</b><span>sur chudan tsuki</span></div></div>
-      <div class="vid reveal"><span class="n">06</span><div><b>Shihonage + tanto</b><span>sur yokomenuchi</span></div></div>
-      <div class="vid reveal"><span class="n">07</span><div><b>Udekimenage + tanto</b><span>sur yokomenuchi</span></div></div>
-      <div class="vid reveal"><span class="n">08</span><div><b>Kotaegaeshi + ken</b><span>sur shomenuchi</span></div></div>
-      <div class="vid reveal"><span class="n">09</span><div><b>Udekimenage &amp; shihonage + ken</b><span>sur yokomenuchi</span></div></div>
-      <div class="vid reveal"><span class="n">10</span><div><b>Kotaegaeshi + jo</b><span>sur chudan tsuki</span></div></div>
-      <div class="vid reveal"><span class="n">11</span><div><b>Shihonage + jo</b><span>sur yokomenuchi</span></div></div>
-      <div class="vid reveal"><span class="n">12</span><div><b>Jiuwaza</b><span>travail libre</span></div></div>
+      <?php foreach ($techniques as $i => $tech): ?>
+      <div class="vid reveal"><span class="n"><?php echo str_pad($i + 1, 2, '0', STR_PAD_LEFT); ?></span><div><b><?php echo e($tech['t'] ?? ''); ?></b><span><?php echo e($tech['d'] ?? ''); ?></span></div></div>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
@@ -794,24 +792,22 @@ body.has-alert header{top:42px}
     <div class="reveal">
       <p class="eyebrow">La progression</p>
       <h2 class="h-sec">Grades &amp; armes</h2>
-      <p class="lead">En aïkido traditionnel, la progression se fait par grades kyu (élève), puis dan (ceinture noire), passés devant la Commission Fédérale des Grades de l'AFA et validés par le Hombu Dojo, l'Aïkikaï de Tokyo.</p>
+      <p class="lead"><?php echo e($armes['grades_intro'] ?? ''); ?></p>
     </div>
     <div class="belt-track reveal">
-      <div class="belt"><div class="bar" style="background:#f2ede1;border:1px solid var(--line)"></div><b>Débutant</b><span>Premiers pas sur le tatami</span></div>
-      <div class="belt"><div class="bar" style="background:#e7dcc6;border:1px solid var(--line)"></div><b>6ᵉ à 4ᵉ kyu</b><span>Élève</span></div>
-      <div class="belt"><div class="bar" style="background:#c9b892;border:1px solid var(--line)"></div><b>3ᵉ à 1ᵉʳ kyu</b><span>Élève avancé</span></div>
-      <div class="belt"><div class="bar" style="background:#17130d"></div><b>Shodan</b><span>1ᵉʳ dan, ceinture noire</span></div>
-      <div class="belt"><div class="bar" style="background:linear-gradient(90deg,#17130d,#b08d57)"></div><b>Yudansha</b><span>Dan supérieurs</span></div>
+      <?php foreach (($armes['belts'] ?? []) as $b): $bar = $b['bar'] ?? '#e7dcc6'; $border = (strpos($bar, 'gradient') === false && $bar !== '#17130d') ? ';border:1px solid var(--line)' : ''; ?>
+      <div class="belt"><div class="bar" style="background:<?php echo e($bar); ?><?php echo $border; ?>"></div><b><?php echo e($b['label'] ?? ''); ?></b><span><?php echo e($b['sub'] ?? ''); ?></span></div>
+      <?php endforeach; ?>
     </div>
 
     <div class="reveal" style="margin-top:56px">
       <h3 class="serif" style="font-size:1.8rem;margin:0 0 6px">Les armes du dojo</h3>
-      <p class="lead" style="margin:0">L'aïkido s'étudie à mains nues, mais aussi avec les armes traditionnelles, qui affinent les déplacements, la distance et la précision.</p>
+      <p class="lead" style="margin:0"><?php echo e($armes['armes_intro'] ?? ''); ?></p>
     </div>
     <div class="arme-grid">
-      <div class="arme reveal"><span class="jp">木剣</span><h4>Bokken</h4><p>Sabre en bois. Il transmet les principes du sabre japonais (ken) : posture, coupe et intention.</p></div>
-      <div class="arme reveal"><span class="jp">杖</span><h4>Jo</h4><p>Bâton d'environ 1,28 m. Il développe les déplacements, les frappes et la fluidité du corps.</p></div>
-      <div class="arme reveal"><span class="jp">短刀</span><h4>Tanto</h4><p>Couteau (en bois à l'entraînement). Il sert à étudier les défenses face à une attaque armée.</p></div>
+      <?php foreach (($armes['armes'] ?? []) as $a): ?>
+      <div class="arme reveal"><span class="jp"><?php echo e($a['kanji'] ?? ''); ?></span><h4><?php echo e($a['nom'] ?? ''); ?></h4><p><?php echo e($a['desc'] ?? ''); ?></p></div>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
@@ -1007,24 +1003,26 @@ body.has-alert header{top:42px}
       <div class="cinfo reveal">
         <div class="row">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>
-          <div><b>Téléphone</b><a href="tel:+32476565257">0476 / 56 52 57</a> · <span>065 / 33 65 93</span></div>
+          <div><b>Téléphone</b><a href="tel:<?php echo e($contact['phone1_tel'] ?? ''); ?>"><?php echo e($contact['phone1'] ?? ''); ?></a><?php if (!empty($contact['phone2'])): ?> · <span><?php echo e($contact['phone2']); ?></span><?php endif; ?></div>
         </div>
         <div class="row">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-          <div><b>E-mail</b><a href="mailto:benoit.toulotte@aikido.be">benoit.toulotte@aikido.be</a></div>
+          <div><b>E-mail</b><a href="mailto:<?php echo e($contact['email'] ?? ''); ?>"><?php echo e($contact['email'] ?? ''); ?></a></div>
         </div>
         <div class="row">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          <div><b>Adresse</b><span>Académie de Police, Route d'Ath 25-35, 7050 Jurbise</span></div>
+          <div><b>Adresse</b><span><?php echo e($contact['address'] ?? ''); ?></span></div>
         </div>
+        <?php $cfb = $contact['facebook'] ?? ''; if ($cfb): ?>
         <div class="row">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3Z"/></svg>
-          <div><b>Suivez-nous</b><a href="https://www.facebook.com/MusubiDojoJurbise/" target="_blank" rel="noopener">facebook.com/MusubiDojoJurbise</a></div>
+          <div><b>Suivez-nous</b><a href="<?php echo e($cfb); ?>" target="_blank" rel="noopener"><?php echo e(preg_replace('#^https?://(www\.)?#', '', rtrim($cfb, '/'))); ?></a></div>
         </div>
+        <?php endif; ?>
         <div class="quick-contact">
-          <a class="qc" href="tel:+32476565257"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>Appeler</a>
-          <a class="qc wa" href="https://wa.me/32476565257" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20Zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.7 1-.3.2-.5.1a6.5 6.5 0 0 1-3.3-2.9c-.2-.4.2-.4.6-1.2a.4.4 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3A2.8 2.8 0 0 0 6 8.4a4.8 4.8 0 0 0 1 2.5 11 11 0 0 0 4.2 3.7c1.5.6 2 .7 2.8.6a2.4 2.4 0 0 0 1.6-1.1 2 2 0 0 0 .1-1.1c-.1-.1-.3-.2-.5-.3Z"/></svg>WhatsApp</a>
-          <a class="qc" href="https://www.google.com/maps/dir/?api=1&destination=50.50327,3.93139" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 19-9-9 19-2-8-8-2Z"/></svg>Itinéraire</a>
+          <a class="qc" href="tel:<?php echo e($contact['phone1_tel'] ?? ''); ?>"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>Appeler</a>
+          <?php if (!empty($contact['whatsapp'])): ?><a class="qc wa" href="<?php echo e($contact['whatsapp']); ?>" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20Zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.7 1-.3.2-.5.1a6.5 6.5 0 0 1-3.3-2.9c-.2-.4.2-.4.6-1.2a.4.4 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3A2.8 2.8 0 0 0 6 8.4a4.8 4.8 0 0 0 1 2.5 11 11 0 0 0 4.2 3.7c1.5.6 2 .7 2.8.6a2.4 2.4 0 0 0 1.6-1.1 2 2 0 0 0 .1-1.1c-.1-.1-.3-.2-.5-.3Z"/></svg>WhatsApp</a><?php endif; ?>
+          <?php if (!empty($contact['maps'])): ?><a class="qc" href="<?php echo e($contact['maps']); ?>" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 19-9-9 19-2-8-8-2Z"/></svg>Itinéraire</a><?php endif; ?>
           <a class="qc" href="musubi-dojo.vcf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>Carte de visite</a>
         </div>
       </div>
@@ -1058,11 +1056,13 @@ body.has-alert header{top:42px}
         <img src="images/logo.png" alt="Musubi Dojo" style="width:52px;height:52px;border-radius:50%"/>
         <span style="line-height:1.1"><b style="font-size:1.5rem">Musubi Dojo</b><span>Aïkido Traditionnel · Jurbise</span></span>
       </a>
-      <p style="margin-top:18px">École d'Aïkido Aïkikaï, étude de l'aïkido traditionnel de O'Senseï Ueshiba. Affiliée à l'Association Francophone d'Aïkido.</p>
+      <p style="margin-top:18px"><?php echo e($lib['footer_tagline'] ?? ''); ?></p>
       <div class="social">
-        <a href="https://www.facebook.com/MusubiDojoJurbise/" target="_blank" rel="noopener" aria-label="Facebook">
+        <?php $ffb = $contact['facebook'] ?? ''; if ($ffb): ?>
+        <a href="<?php echo e($ffb); ?>" target="_blank" rel="noopener" aria-label="Facebook">
           <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>
         </a>
+        <?php endif; ?>
       </div>
     </div>
     <div>
@@ -1084,11 +1084,9 @@ body.has-alert header{top:42px}
     <div>
       <h3>Liens utiles</h3>
       <ul>
-        <li><a href="https://www.aikido.be" target="_blank" rel="noopener">Association Francophone d'Aïkido</a></li>
-        <li><a href="https://www.christiantissier.com" target="_blank" rel="noopener">Cercle Tissier</a></li>
-        <li><a href="http://www.aikikai.or.jp/eng/index.htm" target="_blank" rel="noopener">Hombu Dojo · Aikikai</a></li>
-        <li><a href="http://www.koshi.be" target="_blank" rel="noopener">Koshi Jette</a></li>
-        <li><a href="http://www.ffabaikido.fr/fr/" target="_blank" rel="noopener">Fédération Française d'Aïkido</a></li>
+        <?php foreach ($liens as $l): ?>
+        <li><a href="<?php echo e($l['url'] ?? '#'); ?>" target="_blank" rel="noopener"><?php echo e($l['label'] ?? ''); ?></a></li>
+        <?php endforeach; ?>
       </ul>
     </div>
   </div>
@@ -1116,7 +1114,7 @@ body.has-alert header{top:42px}
   <button class="lb-next" id="lb-next" aria-label="Photo suivante">›</button>
 </div>
 
-<script src="gloss.js"></script>
+<script>window.GLOSS = <?php echo json_encode($glossaire, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;</script>
 <script>
 // header scroll state + back to top
 var head=document.getElementById('head'),topBtn=document.getElementById('top'),mcta=document.getElementById('mcta');
@@ -1145,34 +1143,13 @@ document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
 function norm(s){return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 
 // ---------- bibliographie ----------
-var BOOKS=[
- {c:'fr',img:'budo_moriheiueshiba.jpg',t:'Budo',a:'Morihei Ueshiba',e:'Budostore, Paris'},
- {c:'fr',img:'lapratiquedelaikido_kisshomaru.jpg',t:"La Pratique de l'Aïkido",a:'Kisshomaru Ueshiba',e:'Budo Éditions'},
- {c:'fr',img:'MethNat_tamura.jpg',t:'Aïkido, Méthode nationale',a:'Nobuyoshi Tamura',e:'Univerpress (épuisé)'},
- {c:'fr',img:'tamura_etiquettetransmission.jpg',t:'Aïkido, Étiquette et Transmission',a:'Nobuyoshi Tamura',e:'Soleil Levant'},
- {c:'fr',img:'aikido_tamura.jpg',t:'Aïkido',a:'Nobuyoshi Tamura',e:'AGEP, Marseille'},
- {c:'fr',img:'aikido_natureharmonie.jpg',t:'Aïkido, Nature et Harmonie',a:'Mitsugi Saotome',e:'SEDIREP'},
- {c:'fr',img:'tissier_aikidofondamental_culture.jpg',t:'Aïkido, Culture et Traditions',a:'Christian Tissier',e:'SEDIREP'},
- {c:'fr',img:'tissier_aikidofondamental.jpg',t:'Aïkido fondamental',a:'Christian Tissier',e:'SEDIREP'},
- {c:'fr',img:'tissier_aikidofondamental_tome3_baton.jpg',t:'Aïkido fondamental, Techniques de bâton (T.3)',a:'Christian Tissier',e:'SEDIREP'},
- {c:'fr',img:'tissier_aikidofondamental_tome4.jpg',t:'Aïkido fondamental, Techniques avancées (T.4)',a:'Christian Tissier',e:'SEDIREP'},
- {c:'fr',img:'shobuaiki_grand.jpg',t:'Shobu Aiki',a:'J.D. Cauhépé et A. Kuang',e:'Laballery'},
- {c:'fr',img:'au_dela_de_l_adressivite.jpg',t:"Aïkido, Au-delà de l'agressivité",a:'Massimo N. Di Villadorata',e:"Les Éditions de l'Homme"},
- {c:'fr',img:'traitedidactique_aikidotraditionnel.jpg',t:"Traité didactique d'aïkido traditionnel",a:'Alain Peyrache',e:'ARG, Chalon-sur-Saône'},
- {c:'en',img:'the_spirit_of_aikido_kisshomaru.jpg',t:'The Spirit of Aikido',a:'Kisshomaru Ueshiba',e:'Kodansha'},
- {c:'en',img:'this_is_aikido_KoichiTohei.jpg',t:'This is Aikido',a:'Koichi Tohei',e:'Japan Publications'},
- {c:'en',img:'aikidodynamicsphere.jpg',t:'Aikido and the Dynamic Sphere',a:'Westbrook et Ratti',e:'Tuttle'},
- {c:'en',img:'',t:'The Kiuten-irimi-tenkan-jutsu of Aïkido',a:'Paul C.N. Lee',e:''},
- {c:'autres',img:'',t:"IAI, L'Art du Sabre japonais",a:'Malcom Tiki Shewan',e:'Cannes Azur'},
- {c:'autres',img:'pratique_de_l_escrime_japonaise.jpg',t:"Pratique de l'Escrime japonaise",a:'Serge Degore',e:'Chiron'},
- {c:'autres',img:'le_tanto_et_sa_technique.jpg',t:'Le tanto et sa technique',a:'Gérard Lecoeur',e:'Judogi'},
- {c:'autres',img:'',t:'Le Livre des 5 Anneaux',a:'Miyamoto Musashi',e:'Belfond'}
-];
+var BOOKS=<?php echo json_encode(array_map(fn($b) => ['c' => $b['cat'] ?? '', 'img' => $b['img'] ?? '', 't' => $b['t'] ?? '', 'a' => $b['a'] ?? '', 'e' => $b['e'] ?? ''], $biblio), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
 var bgrid=document.getElementById('biblio-grid');
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function renderBooks(cat){
   bgrid.innerHTML=BOOKS.filter(function(b){return cat==='all'||b.c===cat;}).map(function(b){
-    var cover=b.img?'<div class="cover"><img src="images/bibliographie/'+b.img+'" alt="Couverture : '+esc(b.t)+'" loading="lazy" width="200" height="300"></div>'
+    var src=b.img?(b.img.indexOf('/')>-1?b.img:'images/bibliographie/'+b.img):'';
+    var cover=src?'<div class="cover"><img src="'+src+'" alt="Couverture : '+esc(b.t)+'" loading="lazy" width="200" height="300"></div>'
                     :'<div class="cover na">Image non disponible</div>';
     return '<div class="book">'+cover+'<b>'+esc(b.t)+'</b><span>'+esc(b.a)+(b.e?' · '+esc(b.e):'')+'</span></div>';
   }).join('');

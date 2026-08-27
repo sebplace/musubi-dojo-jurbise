@@ -254,8 +254,107 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             if ($up) { $mem['founder']['photo'] = $up; $mem['founder']['webp'] = $upWebp ?? ''; }
             save_json('memoriam.json', $mem);
             flash('In Memoriam mis à jour.');
+        } elseif ($do === 'techniques') {
+            $items = []; $ts = $_POST['t_t'] ?? []; $ds = $_POST['t_d'] ?? [];
+            for ($k = 0; $k < count($ts); $k++) { $t = trim($ts[$k]); if ($t === '') continue; $items[] = ['t' => $t, 'd' => trim($ds[$k] ?? '')]; }
+            save_json('techniques.json', $items);
+            flash('Liste des techniques mise à jour.');
+        } elseif ($do === 'armes') {
+            $armes = load_json('armes.json', []);
+            $armes['grades_intro'] = trim($_POST['grades_intro'] ?? '');
+            $armes['armes_intro']  = trim($_POST['armes_intro'] ?? '');
+            $belts = []; $bl = $_POST['b_label'] ?? []; $bs = $_POST['b_sub'] ?? []; $bb = $_POST['b_bar'] ?? [];
+            for ($k = 0; $k < count($bl); $k++) { $l = trim($bl[$k]); if ($l === '') continue; $belts[] = ['label' => $l, 'sub' => trim($bs[$k] ?? ''), 'bar' => trim($bb[$k] ?? '#e7dcc6')]; }
+            $armes['belts'] = $belts;
+            $w = []; $wk = $_POST['w_kanji'] ?? []; $wn = $_POST['w_nom'] ?? []; $wd = $_POST['w_desc'] ?? [];
+            for ($k = 0; $k < count($wn); $k++) { $n = trim($wn[$k]); if ($n === '') continue; $w[] = ['kanji' => trim($wk[$k] ?? ''), 'nom' => $n, 'desc' => trim($wd[$k] ?? '')]; }
+            $armes['armes'] = $w;
+            save_json('armes.json', $armes);
+            flash('Grades & armes mis à jour.');
+        } elseif ($do === 'libelles') {
+            save_json('libelles.json', [
+                'hero_eyebrow'   => trim($_POST['hero_eyebrow'] ?? ''),
+                'hero_title'     => trim($_POST['hero_title'] ?? ''),
+                'hero_subtitle'  => trim($_POST['hero_subtitle'] ?? ''),
+                'footer_tagline' => trim($_POST['footer_tagline'] ?? ''),
+                'director'       => trim($_POST['director'] ?? ''),
+            ]);
+            flash('Libellés mis à jour.');
         }
         redirect('p=textes');
+    }
+
+    /* ---------------- GLOSSAIRE ---------------- */
+    if ($p === 'glossaire') {
+        $secs = load_json('glossaire.json', []);
+        $si = (int) ($_POST['sec'] ?? -1);
+        if ($do === 'save_section' && isset($secs[$si])) {
+            $items = [];
+            foreach (preg_split('/\r\n|\r|\n/', (string) ($_POST['lines'] ?? '')) as $line) {
+                $line = trim($line);
+                if ($line === '') continue;
+                $parts = array_map('trim', explode('|', $line));
+                $items[] = ['t' => $parts[0] ?? '', 'p' => $parts[1] ?? '', 'd' => $parts[2] ?? ''];
+            }
+            $secs[$si]['items'] = $items;
+            save_json('glossaire.json', $secs);
+            flash('Section « ' . ($secs[$si]['title'] ?? '') . ' » mise à jour.');
+        }
+        redirect('p=glossaire');
+    }
+
+    /* ---------------- BIBLIOGRAPHIE ---------------- */
+    if ($p === 'bibliographie') {
+        $items = load_json('bibliographie.json', []);
+        if ($do === 'delete') {
+            $i = (int) ($_POST['idx'] ?? -1);
+            if (isset($items[$i])) array_splice($items, $i, 1);
+            save_json('bibliographie.json', array_values($items));
+            flash('Ouvrage supprimé.');
+        } elseif ($do === 'save') {
+            $idx  = $_POST['idx'] === '' ? null : (int) $_POST['idx'];
+            $item = ['cat' => trim($_POST['cat'] ?? 'fr'), 't' => trim($_POST['t'] ?? ''), 'a' => trim($_POST['a'] ?? ''), 'e' => trim($_POST['e'] ?? ''), 'img' => ''];
+            if ($idx !== null && isset($items[$idx])) $item['img'] = $items[$idx]['img'] ?? '';
+            [$up, $upWebp, $upErr] = upload_image('cover', 'biblio');
+            if ($upErr) { flash($upErr, 'err'); redirect('p=bibliographie'); }
+            if ($up) $item['img'] = $up; // chemin complet (images/...), géré par l'affichage
+            if ($item['t'] === '') { flash('Le titre est obligatoire.', 'err'); redirect('p=bibliographie'); }
+            if ($idx !== null && isset($items[$idx])) $items[$idx] = $item; else $items[] = $item;
+            save_json('bibliographie.json', array_values($items));
+            flash('Ouvrage enregistré.');
+        }
+        redirect('p=bibliographie');
+    }
+
+    /* ---------------- COORDONNÉES ---------------- */
+    if ($p === 'coordonnees') {
+        if ($do === 'contact') {
+            $tel = preg_replace('/[^0-9+]/', '', $_POST['phone1'] ?? '');
+            save_json('contact.json', [
+                'phone1' => trim($_POST['phone1'] ?? ''),
+                'phone1_tel' => $tel,
+                'phone2' => trim($_POST['phone2'] ?? ''),
+                'email' => trim($_POST['email'] ?? ''),
+                'address' => trim($_POST['address'] ?? ''),
+                'address_full' => trim($_POST['address'] ?? ''),
+                'maps' => trim($_POST['maps'] ?? ''),
+                'whatsapp' => trim($_POST['whatsapp'] ?? ''),
+                'facebook' => trim($_POST['facebook'] ?? ''),
+            ]);
+            flash('Coordonnées mises à jour.');
+        } elseif ($do === 'liens') {
+            $items = [];
+            foreach (preg_split('/\r\n|\r|\n/', (string) ($_POST['lines'] ?? '')) as $line) {
+                $line = trim($line);
+                if ($line === '') continue;
+                $parts = array_map('trim', explode('|', $line, 2));
+                if (empty($parts[0])) continue;
+                $items[] = ['label' => $parts[0], 'url' => $parts[1] ?? '#'];
+            }
+            save_json('liens.json', $items);
+            flash('Liens utiles mis à jour.');
+        }
+        redirect('p=coordonnees');
     }
 
     /* ---------------- RÉGLAGES ---------------- */
@@ -508,6 +607,12 @@ if ($p === 'textes') {
     $his = load_json('histoire.json', []);
     $faq = load_json('faq.json', []);
     $mem = load_json('memoriam.json', []);
+    $tech = load_json('techniques.json', []);
+    $arm = load_json('armes.json', []);
+    $lib = load_json('libelles.json', []);
+    $techRows = $tech; for ($k = 0; $k < 2; $k++) $techRows[] = ['t' => '', 'd' => ''];
+    $beltRows = $arm['belts'] ?? []; $beltRows[] = ['label' => '', 'sub' => '', 'bar' => '#e7dcc6'];
+    $wRows = $arm['armes'] ?? []; $wRows[] = ['kanji' => '', 'nom' => '', 'desc' => ''];
     $vals = $aik['values'] ?? [];
     while (count($vals) < 4) $vals[] = ['title' => '', 'text' => ''];
     $hisRows = $his; for ($k = 0; $k < 2; $k++) $hisRows[] = ['year' => '', 'text' => ''];
@@ -560,6 +665,143 @@ if ($p === 'textes') {
         <div class="actions"><button type="submit">Enregistrer</button></div>
       </form>
     </section>
+
+    <section class="panel">
+      <h2>Liste des techniques</h2>
+      <form method="POST"><?php echo csrf_field(); ?><input type="hidden" name="do" value="techniques">
+        <?php foreach ($techRows as $t): ?>
+        <div class="row-form"><input name="t_t[]" placeholder="Technique (ex. Shihonage)" value="<?php echo e($t['t'] ?? ''); ?>"><input name="t_d[]" placeholder="Attaque (ex. sur shomenuchi)" value="<?php echo e($t['d'] ?? ''); ?>"></div>
+        <?php endforeach; ?>
+        <div class="actions"><button type="submit">Enregistrer</button></div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Grades &amp; armes</h2>
+      <form method="POST"><?php echo csrf_field(); ?><input type="hidden" name="do" value="armes">
+        <label>Texte d'introduction (grades)<textarea name="grades_intro" rows="2"><?php echo e($arm['grades_intro'] ?? ''); ?></textarea></label>
+        <p class="muted" style="margin:6px 0">Progression (libellé · sous-titre · couleur) :</p>
+        <?php foreach ($beltRows as $b): ?>
+        <div class="row-form"><input name="b_label[]" placeholder="Libellé" value="<?php echo e($b['label'] ?? ''); ?>"><input name="b_sub[]" placeholder="Sous-titre" value="<?php echo e($b['sub'] ?? ''); ?>"><input name="b_bar[]" placeholder="Couleur (#e7dcc6)" value="<?php echo e($b['bar'] ?? ''); ?>" style="max-width:150px"></div>
+        <?php endforeach; ?>
+        <label style="margin-top:14px">Texte d'introduction (armes)<textarea name="armes_intro" rows="2"><?php echo e($arm['armes_intro'] ?? ''); ?></textarea></label>
+        <p class="muted" style="margin:6px 0">Armes (kanji · nom · description) :</p>
+        <?php foreach ($wRows as $w): ?>
+        <label>Nom<input name="w_nom[]" value="<?php echo e($w['nom'] ?? ''); ?>"></label>
+        <div class="row-form"><input name="w_kanji[]" placeholder="Kanji" value="<?php echo e($w['kanji'] ?? ''); ?>" style="max-width:110px"><input name="w_desc[]" placeholder="Description" value="<?php echo e($w['desc'] ?? ''); ?>"></div>
+        <hr>
+        <?php endforeach; ?>
+        <div class="actions"><button type="submit">Enregistrer</button></div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Libellés &amp; accroche</h2>
+      <form method="POST"><?php echo csrf_field(); ?><input type="hidden" name="do" value="libelles">
+        <label>Accroche (au-dessus du titre)<input name="hero_eyebrow" value="<?php echo e($lib['hero_eyebrow'] ?? ''); ?>"></label>
+        <label>Titre principal (utilisez <code>&lt;br&gt;</code> pour un retour à la ligne)<input name="hero_title" value="<?php echo e($lib['hero_title'] ?? ''); ?>"></label>
+        <label>Texte d'introduction<textarea name="hero_subtitle" rows="3"><?php echo e($lib['hero_subtitle'] ?? ''); ?></textarea></label>
+        <label>Directeur technique (sous les professeurs)<textarea name="director" rows="2"><?php echo e($lib['director'] ?? ''); ?></textarea></label>
+        <label>Texte du pied de page<textarea name="footer_tagline" rows="2"><?php echo e($lib['footer_tagline'] ?? ''); ?></textarea></label>
+        <div class="actions"><button type="submit">Enregistrer</button></div>
+      </form>
+    </section>
+    <?php admin_footer(); exit;
+}
+
+/* ---------------- GLOSSAIRE ---------------- */
+if ($p === 'glossaire') {
+    $secs = load_json('glossaire.json', []);
+    admin_header('Glossaire', 'glossaire');
+    ?>
+    <p class="hint">Un terme par ligne, au format <code>Terme | prononciation | définition</code>. La prononciation peut rester vide (<code>Terme | | définition</code>).</p>
+    <?php foreach ($secs as $si => $sec): ?>
+    <section class="panel">
+      <h2><?php echo e($sec['title'] ?? ''); ?> <small class="muted">(<?php echo count($sec['items'] ?? []); ?> termes)</small></h2>
+      <form method="POST"><?php echo csrf_field(); ?><input type="hidden" name="do" value="save_section"><input type="hidden" name="sec" value="<?php echo $si; ?>">
+        <textarea name="lines" rows="12"><?php
+            foreach (($sec['items'] ?? []) as $it) echo e(($it['t'] ?? '') . ' | ' . ($it['p'] ?? '') . ' | ' . ($it['d'] ?? '')) . "\n";
+        ?></textarea>
+        <div class="actions"><button type="submit">Enregistrer cette section</button></div>
+      </form>
+    </section>
+    <?php endforeach; ?>
+    <?php admin_footer(); exit;
+}
+
+/* ---------------- BIBLIOGRAPHIE ---------------- */
+if ($p === 'bibliographie') {
+    $items = load_json('bibliographie.json', []);
+    $edit  = isset($_GET['edit']) ? (int) $_GET['edit'] : null;
+    $cur   = ($edit !== null && isset($items[$edit])) ? $items[$edit] : null;
+    $catLabels = ['fr' => 'Français', 'en' => 'Anglais', 'autres' => 'Autres'];
+    admin_header('Bibliographie', 'bibliographie');
+    ?>
+    <div class="cols">
+      <section class="panel">
+        <h2><?php echo $cur ? "Modifier l'ouvrage" : 'Ajouter un ouvrage'; ?></h2>
+        <form method="POST" enctype="multipart/form-data">
+          <?php echo csrf_field(); ?><input type="hidden" name="do" value="save"><input type="hidden" name="idx" value="<?php echo $edit !== null ? (int) $edit : ''; ?>">
+          <label>Titre <span class="req">*</span><input name="t" required value="<?php echo e($cur['t'] ?? ''); ?>"></label>
+          <label>Auteur<input name="a" value="<?php echo e($cur['a'] ?? ''); ?>"></label>
+          <label>Éditeur<input name="e" value="<?php echo e($cur['e'] ?? ''); ?>"></label>
+          <label>Catégorie
+            <select name="cat">
+              <?php foreach ($catLabels as $k => $v): ?><option value="<?php echo $k; ?>" <?php echo (($cur['cat'] ?? 'fr') === $k) ? 'selected' : ''; ?>><?php echo e($v); ?></option><?php endforeach; ?>
+            </select>
+          </label>
+          <?php if (!empty($cur['img'])): $src = strpos($cur['img'], '/') !== false ? $cur['img'] : 'images/bibliographie/' . $cur['img']; ?><p class="thumb"><img src="../<?php echo e($src); ?>" alt=""></p><?php endif; ?>
+          <label>Couverture (facultative)<input type="file" name="cover" accept="image/*"></label>
+          <div class="actions"><button type="submit">Enregistrer</button><?php if ($cur): ?> <a class="btn-sec" href="index.php?p=bibliographie">Annuler</a><?php endif; ?></div>
+        </form>
+      </section>
+      <section class="panel">
+        <h2>Ouvrages (<?php echo count($items); ?>)</h2>
+        <ul class="list">
+          <?php foreach ($items as $i => $it): ?>
+          <li>
+            <div class="li-main"><span><b><?php echo e($it['t'] ?? ''); ?></b><small><?php echo e($it['a'] ?? ''); ?> · <?php echo e($catLabels[$it['cat'] ?? 'fr'] ?? ''); ?></small></span></div>
+            <div class="li-act">
+              <a class="btn-sec" href="index.php?p=bibliographie&edit=<?php echo $i; ?>">Modifier</a>
+              <form method="POST" onsubmit="return confirm('Supprimer cet ouvrage ?');"><?php echo csrf_field(); ?><input type="hidden" name="do" value="delete"><input type="hidden" name="idx" value="<?php echo $i; ?>"><button class="danger">Supprimer</button></form>
+            </div>
+          </li>
+          <?php endforeach; ?>
+        </ul>
+      </section>
+    </div>
+    <?php admin_footer(); exit;
+}
+
+/* ---------------- COORDONNÉES ---------------- */
+if ($p === 'coordonnees') {
+    $c = load_json('contact.json', []);
+    $liens = load_json('liens.json', []);
+    admin_header('Coordonnées', 'coordonnees');
+    ?>
+    <div class="cols">
+      <section class="panel">
+        <h2>Coordonnées de contact</h2>
+        <form method="POST"><?php echo csrf_field(); ?><input type="hidden" name="do" value="contact">
+          <label>Téléphone principal<input name="phone1" value="<?php echo e($c['phone1'] ?? ''); ?>"></label>
+          <label>Téléphone secondaire<input name="phone2" value="<?php echo e($c['phone2'] ?? ''); ?>"></label>
+          <label>E-mail<input name="email" type="email" value="<?php echo e($c['email'] ?? ''); ?>"></label>
+          <label>Adresse<input name="address" value="<?php echo e($c['address'] ?? ''); ?>"></label>
+          <label>Lien itinéraire (Google Maps)<input name="maps" value="<?php echo e($c['maps'] ?? ''); ?>"></label>
+          <label>Lien WhatsApp<input name="whatsapp" value="<?php echo e($c['whatsapp'] ?? ''); ?>"></label>
+          <label>Page Facebook<input name="facebook" value="<?php echo e($c['facebook'] ?? ''); ?>"></label>
+          <div class="actions"><button type="submit">Enregistrer</button></div>
+        </form>
+      </section>
+      <section class="panel">
+        <h2>Liens utiles (pied de page)</h2>
+        <p class="muted" style="margin-top:-8px">Un lien par ligne, au format <code>Libellé | adresse</code>.</p>
+        <form method="POST"><?php echo csrf_field(); ?><input type="hidden" name="do" value="liens">
+          <textarea name="lines" rows="8"><?php foreach ($liens as $l) echo e(($l['label'] ?? '') . ' | ' . ($l['url'] ?? '')) . "\n"; ?></textarea>
+          <div class="actions"><button type="submit">Enregistrer</button></div>
+        </form>
+      </section>
+    </div>
     <?php admin_footer(); exit;
 }
 
@@ -629,6 +871,9 @@ admin_header('Tableau de bord');
   <a class="tile" href="index.php?p=galerie"><b><?php echo $nbGal; ?></b><span>Photos de galerie</span></a>
   <a class="tile" href="index.php?p=professeurs"><b><?php echo $nbProf; ?></b><span>Professeurs</span></a>
   <a class="tile" href="index.php?p=textes"><b>✎</b><span>Textes</span></a>
+  <a class="tile" href="index.php?p=glossaire"><b>語</b><span>Glossaire</span></a>
+  <a class="tile" href="index.php?p=bibliographie"><b>📚</b><span>Bibliographie</span></a>
+  <a class="tile" href="index.php?p=coordonnees"><b>✆</b><span>Coordonnées</span></a>
   <a class="tile" href="index.php?p=infos"><b>⚙</b><span>Infos pratiques</span></a>
   <a class="tile" href="index.php?p=reglages"><b>⚙</b><span>Réglages</span></a>
 </div>
