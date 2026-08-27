@@ -8,3 +8,5 @@ production/inc/_contact-dev.log
 
 production/data/auth.json
 production/data/messages.json
+
+production/sessions/sess_*

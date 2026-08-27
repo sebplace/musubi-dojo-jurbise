@@ -4,6 +4,14 @@
  * Session, authentification, protection CSRF, upload d'images, mise en page.
  */
 if (session_status() === PHP_SESSION_NONE) {
+    // O2switch/CloudLinux : le dossier de sessions par défaut peut être défaillant.
+    // On force un dossier privé du site (protégé par .htaccess).
+    $sp = __DIR__ . '/../sessions';
+    if (!is_dir($sp)) @mkdir($sp, 0700, true);
+    if (is_dir($sp) && is_writable($sp)) {
+        session_save_path($sp);
+        ini_set('session.save_path', $sp);
+    }
     session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax']);
     session_start();
 }
