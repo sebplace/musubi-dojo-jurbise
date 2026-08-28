@@ -1,5 +1,7 @@
 {
   "alert_enabled": false,
   "alert_text": "",
-  "facebook_url": "https://www.facebook.com/MusubiDojoJurbise/"
+  "facebook_url": "https://www.facebook.com/MusubiDojoJurbise/",
+  "partner_name": "Kasshin Dojo · Soignies",
+  "partner_url": "https://kasshindojo.be"
 }

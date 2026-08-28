@@ -399,6 +399,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 'alert_enabled' => !empty($_POST['alert_enabled']),
                 'alert_text'    => trim($_POST['alert_text'] ?? ''),
                 'facebook_url'  => trim($_POST['facebook_url'] ?? ''),
+                'partner_name'  => trim($_POST['partner_name'] ?? ''),
+                'partner_url'   => trim($_POST['partner_url'] ?? ''),
             ]);
             flash('Réglages enregistrés.');
         }
@@ -902,6 +904,10 @@ if ($p === 'reglages') {
           <label class="inline"><input type="checkbox" name="alert_enabled" value="1" <?php echo !empty($set['alert_enabled']) ? 'checked' : ''; ?>> Activer la bannière</label>
           <label>Message<input name="alert_text" value="<?php echo e($set['alert_text'] ?? ''); ?>"></label>
           <label>Adresse de la page Facebook<input name="facebook_url" value="<?php echo e($set['facebook_url'] ?? ''); ?>"></label>
+          <hr style="border:0;border-top:1px solid var(--line,#e5e0d6);margin:14px 0">
+          <p class="muted" style="margin:0 0 8px"><b>Dojo partenaire</b> (carte dans le pied de page). Laissez le lien vide pour masquer la carte.</p>
+          <label>Nom du dojo partenaire<input name="partner_name" value="<?php echo e($set['partner_name'] ?? ''); ?>" placeholder="Ex. Kasshin Dojo · Soignies"></label>
+          <label>Lien du dojo partenaire<input name="partner_url" value="<?php echo e($set['partner_url'] ?? ''); ?>" placeholder="https://kasshindojo.be"></label>
           <div class="actions"><button type="submit">Enregistrer</button></div>
         </form>
       </section>

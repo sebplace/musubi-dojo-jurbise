@@ -364,6 +364,12 @@ footer{background:#0f0c08;color:rgba(247,241,230,.7)}
 .foot li{margin:8px 0;font-size:.92rem}
 .foot a:hover{color:var(--gold)}
 .foot p{font-size:.9rem;max-width:36ch}
+.foot-partner{display:flex;align-items:center;justify-content:center;gap:14px;max-width:var(--maxw);margin:0 auto;padding:18px 24px;border-top:1px solid rgba(247,241,230,.12);color:rgba(247,241,230,.85);flex-wrap:wrap;transition:.25s}
+.foot-partner:hover{color:var(--gold)}
+.foot-partner .fp-label{font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.foot-partner .fp-name{font-family:'Cormorant Garamond',serif;font-size:1.25rem}
+.foot-partner .fp-go{color:var(--gold);font-size:1.2rem;font-weight:700;transition:.25s}
+.foot-partner:hover .fp-go{transform:translateX(4px)}
 .foot-bottom{border-top:1px solid rgba(247,241,230,.1);text-align:center;padding:22px;font-size:.82rem;color:rgba(247,241,230,.62)}
 .foot-bottom a{color:rgba(247,241,230,.75);text-decoration:underline}
 .gal-note a{text-decoration:underline}
@@ -1295,6 +1301,13 @@ html.theme-jardin{
       </ul>
     </div>
   </div>
+  <?php $pName = settings('partner_name'); $pUrl = settings('partner_url'); if ($pUrl): ?>
+  <a class="foot-partner" href="<?php echo e($pUrl); ?>" target="_blank" rel="noopener">
+    <span class="fp-label">Dojo partenaire</span>
+    <span class="fp-name"><?php echo e($pName ?: $pUrl); ?></span>
+    <span class="fp-go" aria-hidden="true">&rarr;</span>
+  </a>
+  <?php endif; ?>
   <div class="foot-bottom">
     © <span id="yr"></span> École d'Aïkido Musubi Dojo · Jurbise · Tous droits réservés ·
     <a href="mentions-legales.php">Mentions légales</a> ·
