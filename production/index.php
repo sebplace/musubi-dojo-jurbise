@@ -22,11 +22,14 @@ $armes     = load_json('armes.json', []);
 $liens     = load_json('liens.json', []);
 $lib       = load_json('libelles.json', []);
 $alertOn = settings('alert_enabled') && trim((string) settings('alert_text')) !== '';
-$themeOr = (($_GET['theme'] ?? '') === 'or');
-$logoImg = $themeOr ? 'images/logo-or.png' : 'images/logo.png';
+$theme = preg_replace('/[^a-z]/', '', strtolower($_GET['theme'] ?? ''));
+if (!in_array($theme, ['or', 'jardin'], true)) $theme = '';
+$themeClass = $theme ? 'theme-' . $theme : '';
+$themeOr = ($theme === 'or');
+$logoImg = ($theme === 'or' || $theme === 'jardin') ? 'images/logo-or.png' : 'images/logo.png';
 ?>
 <!DOCTYPE html>
-<html lang="fr"<?php echo $themeOr ? ' class="theme-or"' : ''; ?>>
+<html lang="fr"<?php echo $themeClass ? ' class="' . $themeClass . '"' : ''; ?>>
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -683,6 +686,52 @@ html.theme-or{
   .theme-or .menu{background:#141009}
   .theme-or .menu a{color:#f4ebd7!important}
 }
+
+/* ============================================================
+   THEME "JARDIN" — clair & coloré (?theme=jardin)
+   Fond lumineux + palette variée (indigo, corail, vert, or),
+   logo doré. Garde la structure claire.
+   ============================================================ */
+html.theme-jardin{
+  --paper:#fcf9f4;
+  --paper-2:#f1ece1;
+  --paper-3:#e7dcc9;
+  --ink:#1f1a14;
+  --vermillion:#2f6690;   /* accent principal : indigo (ai-iro) */
+  --vermillion-d:#244f70;
+  --gold:#c1912f;
+  --muted:#6a6154;
+  --line:rgba(31,26,20,.12);
+}
+/* variété de couleurs sur les cartes « valeurs » */
+.theme-jardin .values .value{border-top:3px solid var(--gold)}
+.theme-jardin .values .value:nth-child(1){border-top-color:#2f6690}
+.theme-jardin .values .value:nth-child(1) b{color:#2f6690}
+.theme-jardin .values .value:nth-child(2){border-top-color:#d1603d}
+.theme-jardin .values .value:nth-child(2) b{color:#d1603d}
+.theme-jardin .values .value:nth-child(3){border-top-color:#5c8a4a}
+.theme-jardin .values .value:nth-child(3) b{color:#5c8a4a}
+.theme-jardin .values .value:nth-child(4){border-top-color:#c1912f}
+.theme-jardin .values .value:nth-child(4) b{color:#c1912f}
+/* icônes des cartes infos colorées */
+.theme-jardin .cards-3 .card:nth-child(1) .ic{background:rgba(47,102,144,.14)}
+.theme-jardin .cards-3 .card:nth-child(1) .ic svg{stroke:#2f6690}
+.theme-jardin .cards-3 .card:nth-child(2) .ic{background:rgba(209,96,61,.14)}
+.theme-jardin .cards-3 .card:nth-child(2) .ic svg{stroke:#d1603d}
+.theme-jardin .cards-3 .card:nth-child(3) .ic{background:rgba(92,138,74,.14)}
+.theme-jardin .cards-3 .card:nth-child(3) .ic svg{stroke:#5c8a4a}
+/* armes : kanji en couleurs alternées */
+.theme-jardin .arme:nth-child(4n+1) .jp{color:#2f6690}
+.theme-jardin .arme:nth-child(4n+2) .jp{color:#d1603d}
+.theme-jardin .arme:nth-child(4n+3) .jp{color:#5c8a4a}
+.theme-jardin .arme:nth-child(4n) .jp{color:#c1912f}
+/* ensō doré + filigranes recolorés */
+.theme-jardin .enso svg path{stroke:#c1912f}
+.theme-jardin .enso svg{filter:drop-shadow(0 20px 40px rgba(47,102,144,.18))}
+.theme-jardin .hero-kanji{color:rgba(193,145,47,.10)}
+.theme-jardin .musubi-quote .mk{color:rgba(47,102,144,.14)}
+/* icône Facebook déjà bleue : on garde. Liseré au survol indigo. */
+.theme-jardin .fb-card:hover{border-color:#2f6690}
 </style><?php if (config('analytics')) echo "\n" . config('analytics') . "\n"; ?>
 <?php if (turnstile_enabled()): ?><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script><?php endif; ?>
 </head>
