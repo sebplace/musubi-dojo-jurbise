@@ -23,16 +23,21 @@ $liens     = load_json('liens.json', []);
 $lib       = load_json('libelles.json', []);
 $alertOn = settings('alert_enabled') && trim((string) settings('alert_text')) !== '';
 $theme = preg_replace('/[^a-z]/', '', strtolower($_GET['theme'] ?? ''));
-if (!in_array($theme, ['or', 'jardin'], true)) $theme = '';
-$themeClass = $theme ? 'theme-' . $theme : '';
-$themeOr = ($theme === 'or');
-$logoImg = ($theme === 'or' || $theme === 'jardin') ? 'images/logo-or.png' : 'images/logo.png';
+if (!in_array($theme, ['or', 'jardin', 'washi'], true)) $theme = '';
+// Mode "auto" (jour/nuit géré côté client) quand aucun thème n'est imposé par l'URL
+$autoMode   = ($theme === '');
+$themeClass = ($theme === 'or' || $theme === 'jardin') ? 'theme-' . $theme : '';
+$logoImg    = ($theme === 'washi') ? 'images/logo.png' : 'images/logo-or.png';
 ?>
 <!DOCTYPE html>
-<html lang="fr"<?php echo $themeClass ? ' class="' . $themeClass . '"' : ''; ?>>
+<html lang="fr" data-mode="<?php echo $autoMode ? 'auto' : 'fixed'; ?>"<?php echo $themeClass ? ' class="' . $themeClass . '"' : ''; ?>>
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<script>
+/* Applique le mode jour (jardin) / nuit (or) avant le rendu, pour éviter tout clignotement. */
+(function(){try{var h=document.documentElement;if(h.getAttribute('data-mode')!=='auto')return;var m=localStorage.getItem('mdj-mode');if(m!=='day'&&m!=='night'){m=(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)?'night':'day';}h.classList.add(m==='night'?'theme-or':'theme-jardin');}catch(e){document.documentElement.classList.add('theme-jardin');}})();
+</script>
 <title>Musubi Dojo Jurbise · École d'Aïkido</title>
 <meta name="description" content="École d'Aïkido Musubi Dojo à Jurbise. Aïkido traditionnel Aïkikaï pour adultes et enfants. Deux cours d'essai gratuits. Académie de Police de Jurbise, route d'Ath 25-35, 7050 Jurbise."/>
 <meta name="keywords" content="Aïkido, Jurbise, Musubi Dojo, art martial, Aïkikaï, AFA, Mons, Nimy, cours enfants, self-défense"/>
@@ -163,7 +168,7 @@ header{
   padding:16px 24px;max-width:var(--maxw);margin:0 auto;
 }
 header.scrolled{background:rgba(247,241,230,.92);backdrop-filter:blur(12px);box-shadow:0 1px 0 var(--line)}
-.brand{display:flex;align-items:center;gap:12px;color:#fff;transition:.35s}
+.brand{display:flex;align-items:center;gap:12px;color:#fff;transition:.35s;margin-right:auto}
 header.scrolled .brand{color:var(--ink)}
 .brand img{width:44px;height:44px;border-radius:50%;box-shadow:0 6px 16px -6px rgba(0,0,0,.5)}
 .brand b{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:700;letter-spacing:.5px;line-height:1}
@@ -178,6 +183,14 @@ header.scrolled .menu a:hover{background:var(--paper-3)}
 .menu a.cta{background:var(--vermillion);color:#fff!important}
 .menu a.cta:hover{background:var(--vermillion-d)}
 .burger{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px}
+.theme-toggle{background:none;border:0;cursor:pointer;color:#fff;padding:8px;margin-left:6px;display:inline-flex;align-items:center;transition:.35s;border-radius:50%}
+.theme-toggle:hover{background:rgba(255,255,255,.15)}
+header.scrolled .theme-toggle{color:var(--ink)}
+header.scrolled .theme-toggle:hover{background:var(--paper-3)}
+.theme-toggle svg{width:21px;height:21px}
+.theme-toggle .ic-day{display:none}
+.theme-or .theme-toggle .ic-night{display:none}
+.theme-or .theme-toggle .ic-day{display:inline-block}
 .burger span{width:26px;height:2px;background:#fff;transition:.3s}
 header.scrolled .burger span{background:var(--ink)}
 
@@ -271,6 +284,9 @@ header.scrolled .burger span{background:var(--ink)}
 .teacher{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.3s}
 .teacher:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
 .teacher .ph{height:300px;overflow:hidden;background:var(--paper-3)}
+.ph-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--paper-3)}
+.ph-ph span{font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:700;color:var(--vermillion);line-height:1}
+.ph-ph small{font-size:.78rem;letter-spacing:.04em;color:var(--muted)}
 .teacher .ph img{width:100%;height:100%;object-fit:cover;object-position:top center;filter:grayscale(.2) contrast(1.02);transition:.5s}
 .teacher:hover .ph img{filter:none;transform:scale(1.04)}
 .teacher .body{padding:22px 24px 26px}
@@ -755,6 +771,10 @@ html.theme-jardin{
       <a href="#glossaire">Glossaire</a>
       <a href="#contact" class="cta">Cours d'essai gratuit</a>
     </nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Basculer entre le mode jour et le mode nuit" title="Mode jour / nuit">
+      <svg class="ic-day" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.5 12h-2M21.5 12h-2M5.4 5.4 6.8 6.8M17.2 17.2l1.4 1.4M18.6 5.4 17.2 6.8M6.8 17.2 5.4 18.6"/></svg>
+      <svg class="ic-night" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+    </button>
     <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
   </div>
 </header>
@@ -888,9 +908,19 @@ html.theme-jardin{
       <p class="lead" style="margin:0 auto">Une transmission directe, dans la lignée de Sugano Shihan et du Hombu Dojo de Tokyo.</p>
     </div>
     <div class="teachers">
-      <?php foreach ($profs as $p): $pPhoto = $p['photo'] ?? ''; $pWebp = $p['webp'] ?? ''; if ($themeOr) { $pPhoto = preg_replace('#(audrey|roberto)\.jpg$#', '$1-or.jpg', $pPhoto); $pWebp = preg_replace('#(audrey|roberto)\.webp$#', '$1-or.webp', $pWebp); } ?>
+      <?php foreach ($profs as $p): ?>
       <div class="teacher reveal">
-        <div class="ph"><?php echo picture($pPhoto, $pWebp, 'Portrait de ' . ($p['name'] ?? ''), 'loading="lazy" width="400" height="300" style="object-position:' . e($p['pos'] ?? '50% 30%') . '"'); ?></div>
+        <div class="ph">
+        <?php if (empty($p['photo'])):
+          $ini = '';
+          foreach (preg_split('/\s+/', trim($p['name'] ?? '')) as $w) { if ($w !== '') $ini .= mb_strtoupper(mb_substr($w, 0, 1)); }
+          $ini = mb_substr($ini, 0, 2);
+        ?>
+          <div class="ph-ph"><span><?php echo e($ini); ?></span><small>Photo à venir</small></div>
+        <?php else: ?>
+          <?php echo picture($p['photo'], $p['webp'] ?? '', 'Portrait de ' . ($p['name'] ?? ''), 'loading="lazy" width="400" height="300" style="object-position:' . e($p['pos'] ?? '50% 30%') . '"'); ?>
+        <?php endif; ?>
+        </div>
         <div class="body">
           <span class="role"><?php echo e($p['role'] ?? ''); ?></span>
           <h3><?php echo e($p['name'] ?? ''); ?></h3>
@@ -1307,6 +1337,16 @@ burger.addEventListener('click',function(){
   burger.setAttribute('aria-label',open?'Fermer le menu':'Ouvrir le menu');
 });
 menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){menu.classList.remove('open');burger.setAttribute('aria-expanded','false');})});
+// bascule jour (jardin) / nuit (or)
+var themeToggle=document.getElementById('theme-toggle');
+if(themeToggle){themeToggle.addEventListener('click',function(){
+  var h=document.documentElement;
+  var night=h.classList.contains('theme-or');
+  h.classList.remove('theme-or','theme-jardin');
+  h.classList.add(night?'theme-jardin':'theme-or');
+  try{localStorage.setItem('mdj-mode',night?'day':'night');}catch(e){}
+  themeToggle.setAttribute('aria-label',night?'Passer en mode nuit':'Passer en mode jour');
+});}
 topBtn.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
 // reveal on scroll
 var io=new IntersectionObserver(function(es){
