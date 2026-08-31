@@ -32,3 +32,8 @@ Options -Indexes
   ExpiresByType text/css   "access plus 1 week"
   ExpiresByType application/javascript "access plus 1 week"
 </IfModule>
+
+# Types MIME (manifest PWA)
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+</IfModule>

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sebplace.github.io/musubi-dojo-jurbise/sitemap.xml
+Sitemap: https://jurbise.aikido.be/sitemap.xml

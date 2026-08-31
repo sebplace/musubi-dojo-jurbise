@@ -60,6 +60,7 @@ $logoImg    = ($theme === 'washi') ? 'images/logo.png' : 'images/logo-or.png';
 <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16.png"/>
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png"/>
+<link rel="manifest" href="/manifest.webmanifest"/>
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -1453,6 +1454,9 @@ function runCounters(){
 if(strip&&!matchMedia('(prefers-reduced-motion:reduce)').matches){
   new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)runCounters();});},{threshold:.4}).observe(strip);
 }
+</script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
 </script>
 </body>
 </html>
