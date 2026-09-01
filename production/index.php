@@ -46,8 +46,10 @@ $logoImg    = ($theme === 'washi') ? 'images/logo.png' : 'images/logo-or.png';
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="<?php echo $BASE; ?>/"/>
 <meta property="og:image" content="<?php echo $BASE; ?>/images/og.png"/>
+<meta property="og:image:type" content="image/png"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
+<meta property="og:image:alt" content="Musubi Dojo Jurbise, école d'aïkido traditionnel depuis 1987"/>
 <meta property="og:locale" content="fr_BE"/>
 <meta property="og:site_name" content="Musubi Dojo Jurbise"/>
 <meta name="twitter:card" content="summary_large_image"/>
