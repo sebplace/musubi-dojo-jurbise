@@ -15,6 +15,27 @@ function contact_back($ok, $anchor = 'contact') {
 function mail_utf8($to, $subject, $body, $headers) {
     return @mail($to, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, $headers);
 }
+/** Envoi d'un e-mail texte avec une pièce jointe PDF (multipart/mixed). */
+function mail_with_pdf($to, $subject, $text, $siteName, $from, $pdfPath, $pdfName) {
+    $data = @file_get_contents($pdfPath);
+    if ($data === false) return false;
+    $boundary = '=_mdj_' . bin2hex(random_bytes(10));
+    $subj = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+    $headers = 'From: ' . $siteName . ' <' . $from . ">\r\n"
+             . "MIME-Version: 1.0\r\n"
+             . 'Content-Type: multipart/mixed; boundary="' . $boundary . '"';
+    $body  = "--{$boundary}\r\n"
+           . "Content-Type: text/plain; charset=UTF-8\r\n"
+           . "Content-Transfer-Encoding: 8bit\r\n\r\n"
+           . $text . "\r\n"
+           . "--{$boundary}\r\n"
+           . 'Content-Type: application/pdf; name="' . $pdfName . "\"\r\n"
+           . "Content-Transfer-Encoding: base64\r\n"
+           . 'Content-Disposition: attachment; filename="' . $pdfName . "\"\r\n\r\n"
+           . chunk_split(base64_encode($data)) . "\r\n"
+           . "--{$boundary}--";
+    return @mail($to, $subj, $body, $headers);
+}
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') contact_back(false);
 
@@ -86,11 +107,25 @@ mail_utf8($to, $subject, $body, $headers);
 
 /* --- Accusé de réception au visiteur --- */
 if (config('autoreply')) {
+    $licRel = settings('license_pdf');
+    $licAbs = $licRel ? __DIR__ . '/' . $licRel : '';
+    $hasLicense = $licRel && is_file($licAbs);
+
     $arBody = "Bonjour {$nom},\n\n"
-            . "Merci pour votre message. Nous l'avons bien reçu et vous répondrons dès que possible.\n\n"
-            . "À bientôt sur le tatami,\nL'équipe du {$siteName}\n";
-    $arHeaders = 'From: ' . $siteName . ' <' . $from . ">\r\nContent-Type: text/plain; charset=UTF-8\r\nMIME-Version: 1.0";
-    mail_utf8($email, "Nous avons bien reçu votre message - {$siteName}", $arBody, $arHeaders);
+            . "Merci pour votre message. Nous l'avons bien reçu et vous répondrons dès que possible.\n\n";
+    if ($hasLicense) {
+        $arBody .= "Vous trouverez en pièce jointe le formulaire de licence de la fédération (AFA). "
+                 . "Il n'est à compléter que si vous décidez de nous rejoindre après votre cours d'essai : rien ne presse.\n\n";
+    }
+    $arBody .= "À bientôt sur le tatami,\nL'équipe du {$siteName}\n";
+
+    $arSubject = "Nous avons bien reçu votre message - {$siteName}";
+    if ($hasLicense) {
+        mail_with_pdf($email, $arSubject, $arBody, $siteName, $from, $licAbs, 'Formulaire-licence-AFA-Musubi-Dojo.pdf');
+    } else {
+        $arHeaders = 'From: ' . $siteName . ' <' . $from . ">\r\nContent-Type: text/plain; charset=UTF-8\r\nMIME-Version: 1.0";
+        mail_utf8($email, $arSubject, $arBody, $arHeaders);
+    }
 }
 
 contact_back(true, $anchor);

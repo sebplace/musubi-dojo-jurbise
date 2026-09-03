@@ -395,12 +395,23 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $err = change_password($_POST['current'] ?? '', $_POST['new'] ?? '', $_POST['confirm'] ?? '');
             flash($err ?? 'Mot de passe modifié.', $err ? 'err' : 'ok');
         } elseif ($do === 'settings') {
+            $cur = load_json('settings.json', []);
+            $licensePdf = $cur['license_pdf'] ?? '';
+            [$upPdf, $pdfErr] = upload_pdf('license_pdf_file', 'formulaire-licence-afa');
+            if ($pdfErr) { flash($pdfErr, 'err'); redirect('p=reglages'); }
+            if ($upPdf) $licensePdf = $upPdf;
+            if (!empty($_POST['license_pdf_remove'])) {
+                $abs = dirname(__DIR__) . '/' . $licensePdf;
+                if ($licensePdf && is_file($abs)) @unlink($abs);
+                $licensePdf = '';
+            }
             save_json('settings.json', [
                 'alert_enabled' => !empty($_POST['alert_enabled']),
                 'alert_text'    => trim($_POST['alert_text'] ?? ''),
                 'facebook_url'  => trim($_POST['facebook_url'] ?? ''),
                 'partner_name'  => trim($_POST['partner_name'] ?? ''),
                 'partner_url'   => trim($_POST['partner_url'] ?? ''),
+                'license_pdf'   => $licensePdf,
             ]);
             flash('Réglages enregistrés.');
         }
@@ -900,7 +911,7 @@ if ($p === 'reglages') {
       <section class="panel">
         <h2>Bannière d'alerte</h2>
         <p class="muted" style="margin-top:-8px">Affiche un bandeau en haut du site (ex. « Cours annulé ce soir »).</p>
-        <form method="POST"><?php echo csrf_field(); ?><input type="hidden" name="do" value="settings">
+        <form method="POST" enctype="multipart/form-data"><?php echo csrf_field(); ?><input type="hidden" name="do" value="settings">
           <label class="inline"><input type="checkbox" name="alert_enabled" value="1" <?php echo !empty($set['alert_enabled']) ? 'checked' : ''; ?>> Activer la bannière</label>
           <label>Message<input name="alert_text" value="<?php echo e($set['alert_text'] ?? ''); ?>"></label>
           <label>Adresse de la page Facebook<input name="facebook_url" value="<?php echo e($set['facebook_url'] ?? ''); ?>"></label>
@@ -908,6 +919,15 @@ if ($p === 'reglages') {
           <p class="muted" style="margin:0 0 8px"><b>Dojo partenaire</b> (carte dans le pied de page). Laissez le lien vide pour masquer la carte.</p>
           <label>Nom du dojo partenaire<input name="partner_name" value="<?php echo e($set['partner_name'] ?? ''); ?>" placeholder="Ex. Kasshin Dojo · Soignies"></label>
           <label>Lien du dojo partenaire<input name="partner_url" value="<?php echo e($set['partner_url'] ?? ''); ?>" placeholder="https://kasshindojo.be"></label>
+          <hr style="border:0;border-top:1px solid var(--line,#e5e0d6);margin:14px 0">
+          <p class="muted" style="margin:0 0 8px"><b>Formulaire de licence AFA</b> (PDF). Affiché dans la carte « Inscription » et joint à l'accusé de réception des demandes d'essai.</p>
+          <?php $lp = $set['license_pdf'] ?? ''; $lpAbs = dirname(__DIR__) . '/' . $lp; if ($lp && is_file($lpAbs)): ?>
+          <p style="margin:0 0 8px">Document actuel : <a href="../<?php echo e($lp); ?>" target="_blank" rel="noopener">Télécharger le PDF</a></p>
+          <label class="inline"><input type="checkbox" name="license_pdf_remove" value="1"> Supprimer le document</label>
+          <?php else: ?>
+          <p class="muted" style="margin:0 0 8px">Aucun document pour le moment.</p>
+          <?php endif; ?>
+          <label>Remplacer le PDF<input type="file" name="license_pdf_file" accept="application/pdf"></label>
           <div class="actions"><button type="submit">Enregistrer</button></div>
         </form>
       </section>

@@ -881,6 +881,12 @@ html.theme-jardin{
           <?php endforeach; ?>
         </ul>
         <p class="note"><?php echo e($infos['inscription_note'] ?? ''); ?></p>
+        <?php $licPdf = settings('license_pdf'); if ($licPdf && is_file(__DIR__ . '/' . $licPdf)): ?>
+        <a class="btn btn-dark" style="margin-top:16px;display:inline-flex;align-items:center;gap:8px" href="<?php echo e($licPdf); ?>" download="Formulaire-licence-AFA-Musubi-Dojo.pdf">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          Formulaire de licence (PDF)
+        </a>
+        <?php endif; ?>
       </div>
     </div>
 

@@ -115,6 +115,32 @@ function upload_image($field, $prefix) {
     return ['images/' . $name, $webp, null];
 }
 
+/**
+ * Envoi d'un document PDF (ex. formulaire de licence AFA).
+ * Renvoie [chemin_relatif|null, erreur|null]. Aucun fichier envoyé => [null, null].
+ */
+function upload_pdf($field, $prefix = 'document') {
+    if (empty($_FILES[$field]) || ($_FILES[$field]['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+        return [null, null]; // aucun fichier envoyé (facultatif)
+    }
+    $f = $_FILES[$field];
+    if ($f['error'] !== UPLOAD_ERR_OK)  return [null, "Erreur lors de l'envoi du fichier."];
+    if ($f['size'] > 12 * 1024 * 1024)  return [null, "Fichier trop lourd (maximum 12 Mo)."];
+    $fh = @fopen($f['tmp_name'], 'rb');
+    $head = $fh ? fread($fh, 5) : '';
+    if ($fh) fclose($fh);
+    if (strncmp($head, '%PDF-', 5) !== 0) return [null, "Le fichier n'est pas un PDF valide."];
+    $dir = dirname(__DIR__) . '/documents';
+    if (!is_dir($dir)) @mkdir($dir, 0755, true);
+    $slug = trim(preg_replace('/[^a-z0-9]+/', '-', strtolower($prefix)), '-') ?: 'document';
+    $name = $slug . '.pdf';
+    $dest = $dir . '/' . $name;
+    if (!move_uploaded_file($f['tmp_name'], $dest)) {
+        return [null, "Impossible d'enregistrer le document sur le serveur."];
+    }
+    return ['documents/' . $name, null];
+}
+
 /* --------------------------------------------------------------- Layout */
 function admin_header($title, $active = '') {
     $nav = [
