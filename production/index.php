@@ -920,7 +920,7 @@ html.theme-jardin{
     <div class="reveal" style="text-align:center">
       <p class="eyebrow" style="justify-content:center">L'enseignement</p>
       <h2 class="h-sec">Nos professeurs</h2>
-      <p class="lead" style="margin:0 auto">Une transmission directe, dans la lignée de Sugano Shihan et du Hombu Dojo de Tokyo.</p>
+      <p class="lead" style="margin:0 auto">Une transmission directe, dans la lignée de Sugano Shihan et des professeurs du Hombu Dojo de Tokyo.</p>
     </div>
     <div class="teachers">
       <?php foreach ($profs as $p): ?>
